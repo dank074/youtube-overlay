@@ -1,16 +1,19 @@
 <template>
   <div id="app">
     <YoutubeComponent/>
+    <MentionComponent/>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import YoutubeComponent from './components/YoutubeComponent.vue';
+import YoutubeComponent from './components/youtube/YoutubeComponent.vue';
+import MentionComponent from './components/MentionComponent.vue';
 
 @Component({
   components: {
     YoutubeComponent,
+    MentionComponent
   },
 })
 export default class App extends Vue {}

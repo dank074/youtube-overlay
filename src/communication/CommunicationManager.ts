@@ -3,6 +3,9 @@ import YoutubeTVEvent from './incoming/youtube/YoutubeTVEvent';
 import OutgoingMessage from './outgoing/OutgoingMessage';
 import Store from '@/store/Store';
 import Logger from '@/utils/Logger';
+import ChatTypingEvent from './incoming/general/ChatTypingEvent';
+import StoppedTypingEvent from './incoming/general/StoppedTypingEvent';
+import MentionEvent from './incoming/general/MentionEvent';
 
 export default class CommunicationManager {
     private _events : Map<String, IncomingMessage>;
@@ -15,6 +18,9 @@ export default class CommunicationManager {
 
     private RegisterMessages() {
         this._events.set("youtube_tv", new YoutubeTVEvent());
+        this._events.set("typing-start", new ChatTypingEvent());
+        this._events.set("typing-stop", new StoppedTypingEvent());
+        this._events.set("mention", new MentionEvent());
     }
 
     public SendMessage(message: OutgoingMessage) : void{

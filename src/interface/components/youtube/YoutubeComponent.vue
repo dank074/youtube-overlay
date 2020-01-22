@@ -47,6 +47,7 @@ export default class YoutubeComponent extends Vue {
 .box {
     display: block;
     position: absolute;
+    z-index: 1000;
     width: auto;
     height: auto;
     cursor: default;
