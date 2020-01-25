@@ -1,8 +1,7 @@
-import Vue from 'vue'
-import App from './interface/App.vue'
 import Store from './store/Store';
 import CommunicationManager from './communication/CommunicationManager';
 import InteractionManager from './interaction/InteractionManager';
+import InterfaceManager from './interface/InterfaceManager';
 
 declare global {
   interface Window {
@@ -24,29 +23,26 @@ declare global {
   }
 }
 
-window.FlashExternalInterface.openHabblet = function(arg1: string, arg2: string) {
-  CommunicationManager.getInstance().OnMessage(arg1);
-};
+if(process.env.NODE_ENV == 'production') {
+  window.FlashExternalInterface.openHabblet = function(arg1: string, arg2: string) {
+    CommunicationManager.getInstance().OnMessage(arg1);
+  };
+  
+  window.FlashExternalInterface.legacyTrack = function(arg1: string, arg2: string, arg3: string) {
+    if (arg1 == "authentication") {
+      Store.GetInstance().connected = true;
+      InteractionManager.init();
+    }
+  };
+  
+  window.FlashExternalInterface.listPlugins = function() {
+    let txt: string = "";
+    for (var i = 0; i < navigator.plugins.length; i++) {
+      txt += navigator.plugins[i].name + "|";
+    }
+  
+    return txt;
+  };
+}
 
-window.FlashExternalInterface.legacyTrack = function(arg1: string, arg2: string, arg3: string) {
-  if (arg1 == "authentication") {
-    Store.GetInstance().connected = true;
-    InteractionManager.init();
-  }
-};
-
-window.FlashExternalInterface.listPlugins = function() {
-  let txt: string = "";
-  for (var i = 0; i < navigator.plugins.length; i++) {
-    txt += navigator.plugins[i].name + "|";
-  }
-
-  return txt;
-};
-
-Vue.config.productionTip = false
-Vue.config.devtools = true
-
-new Vue({
-  render: h => h(App),
-}).$mount('#app')
+InterfaceManager.Init();
