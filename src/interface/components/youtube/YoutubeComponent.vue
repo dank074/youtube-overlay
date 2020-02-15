@@ -1,6 +1,6 @@
 <template>
-    <div v-show="data.youtubeVideo.open" class="box" v-bind:style="CenterBox" v-draggable>
-        <div class="box_head">
+    <div v-show="data.youtubeVideo.open" class="box" v-bind:style="CenterBox" v-draggable="draggableValue">
+        <div class="box_head" :ref="handleId">
             <div class="box_cross" v-on:click="Close"></div>
                     Youtube Video
         </div>  
@@ -25,8 +25,16 @@ import YoutubeVideoComponent from './YoutubeVideoComponent.vue';
 export default class YoutubeComponent extends Vue {
     data() {
       return { 
-          data: Store.GetInstance()
+          data: Store.GetInstance(),
+          handleId: "drag-yt",
+          draggableValue: {
+            handle: undefined
+          }
       }
+    }
+
+    mounted() {
+      this.$data.draggableValue.handle = this.$refs[this.$data.handleId];
     }
 
     Close (): void {

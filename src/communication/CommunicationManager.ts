@@ -3,13 +3,12 @@ import YoutubeTVEvent from './incoming/youtube/YoutubeTVEvent';
 import OutgoingMessage from './outgoing/OutgoingMessage';
 import Store from '@/store/Store';
 import Logger from '@/utils/Logger';
-import ChatTypingEvent from './incoming/general/ChatTypingEvent';
-import StoppedTypingEvent from './incoming/general/StoppedTypingEvent';
 import MentionEvent from './incoming/general/MentionEvent';
 import SlotMachineEvent from './incoming/slot-machine/SlotMachineEvent';
 import SpinResultEvent from './incoming/slot-machine/SpinResultEvent';
 import SessionDataEvent from './incoming/general/SessionDataEvent';
 import UpdateCreditsEvent from './incoming/general/UpdateCreditsEvent';
+import CommandsEvent from './incoming/general/CommandsEvent';
 
 export default class CommunicationManager {
     private _events : Map<String, IncomingMessage>;
@@ -22,13 +21,12 @@ export default class CommunicationManager {
 
     private RegisterMessages() {
         this._events.set("youtube_tv", new YoutubeTVEvent());
-        this._events.set("typing-start", new ChatTypingEvent());
-        this._events.set("typing-stop", new StoppedTypingEvent());
         this._events.set("mention", new MentionEvent());
         this._events.set("slot_machine", new SlotMachineEvent());
         this._events.set("slot_result", new SpinResultEvent());
         this._events.set("session_data", new SessionDataEvent());
         this._events.set("update_credits", new UpdateCreditsEvent());
+        this._events.set("commands", new CommandsEvent());
     }
 
     public SendMessage(message: OutgoingMessage) : void{

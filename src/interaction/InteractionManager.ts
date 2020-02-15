@@ -1,5 +1,4 @@
 import MovementInteraction from './MovementInteraction';
-import CommandInteraction from './CommandInteraction';
 import Interaction from './Interaction';
 
 export default class InteractionManager {
@@ -13,7 +12,6 @@ export default class InteractionManager {
 
     private RegisterInteractions() {
         this.interactions.set("movement", new MovementInteraction());
-        this.interactions.set("commands", new CommandInteraction());
     }
 
     public getInteractions(): Map<String, Interaction> {

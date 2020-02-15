@@ -3,6 +3,9 @@
     <YoutubeComponent/>
     <MentionComponent/>
     <SlotMachineComponent ref="slotmachine"/>
+    <CommandsComponent/>
+    <JukeboxComponent/>
+    <JukeboxYoutubeComponent ref="jukebox-player"/>
   </div>
 </template>
 
@@ -11,12 +14,18 @@ import { Component, Vue } from "vue-property-decorator";
 import YoutubeComponent from "./components/youtube/YoutubeComponent.vue";
 import MentionComponent from "./components/MentionComponent.vue";
 import SlotMachineComponent from "./components/slot-machine/SlotMachineComponent.vue";
+import CommandsComponent from "./components/CommandsComponent.vue";
+import JukeboxComponent from "./components/jukebox/JukeboxComponent.vue";
+import JukeboxYoutubeComponent from './components/jukebox/JukeboxYoutubeComponent.vue';
 
 @Component({
   components: {
     YoutubeComponent,
     MentionComponent,
-    SlotMachineComponent
+    SlotMachineComponent,
+    CommandsComponent,
+    JukeboxComponent,
+    JukeboxYoutubeComponent
   }
 })
 export default class App extends Vue {

@@ -1,6 +1,6 @@
 <template>
-  <div class="SlotMachine" v-show="data.slotMachine.open" v-draggable>
-      <div class="box_head"><div class="box_cross" v-on:click="Close"></div> Slot Machine </div>
+  <div class="SlotMachine" v-show="data.slotMachine.open" v-draggable="draggableValue">
+      <div class="box_head" :ref="handleId"><div class="box_cross" v-on:click="Close"></div> Slot Machine </div>
     <div class="SlotMachine-reels">
       <div class="SlotMachine-shadow"></div>
       <div class="SlotMachine-payline"></div>
@@ -53,7 +53,11 @@ export default class SlotMachineComponent extends Vue {
 
   data() {
     return {
-      data: Store.GetInstance()
+      data: Store.GetInstance(),
+      handleId: "drag-slots",
+      draggableValue: {
+        handle: undefined
+      }
     };
   }
 
@@ -61,6 +65,7 @@ export default class SlotMachineComponent extends Vue {
     this.$on("results", () => {
       this.onResults();
     });
+    this.$data.draggableValue.handle = this.$refs[this.$data.handleId];
   }
 
   onResults(): void {
@@ -87,6 +92,7 @@ export default class SlotMachineComponent extends Vue {
       Store.GetInstance().slotMachine.results.length == 0 &&
       !Store.GetInstance().slotMachine.isSpinning
     ) {
+      this.won = 0;
       let itemId = Store.GetInstance().slotMachine.itemId;
       CommunicationManager.getInstance().SendMessage(
         new RequestSpinSlotMachineComposer(itemId, this.bet)
