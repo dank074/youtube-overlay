@@ -5,7 +5,7 @@
     <SlotMachineComponent ref="slotmachine"/>
     <CommandsComponent/>
     <JukeboxComponent/>
-    <JukeboxYoutubeComponent ref="jukebox-player"/>
+    <JukeboxYoutubeComponent ref="jukeboxPlayer"/>
   </div>
 </template>
 

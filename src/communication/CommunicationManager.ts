@@ -9,6 +9,11 @@ import SpinResultEvent from './incoming/slot-machine/SpinResultEvent';
 import SessionDataEvent from './incoming/general/SessionDataEvent';
 import UpdateCreditsEvent from './incoming/general/UpdateCreditsEvent';
 import CommandsEvent from './incoming/general/CommandsEvent';
+import JukeboxEvent from './incoming/jukebox/JukeboxEvent';
+import StopPlayingEvent from './incoming/jukebox/StopPlayingEvent';
+import PlaySongEvent from './incoming/jukebox/PlaySongEvent';
+import PlaylistEvent from './incoming/jukebox/PlaylistEvent';
+import DisposePlaylistEvent from './incoming/jukebox/DisposePlaylistEvent';
 
 export default class CommunicationManager {
     private _events : Map<String, IncomingMessage>;
@@ -27,6 +32,11 @@ export default class CommunicationManager {
         this._events.set("session_data", new SessionDataEvent());
         this._events.set("update_credits", new UpdateCreditsEvent());
         this._events.set("commands", new CommandsEvent());
+        this._events.set("jukebox_player", new JukeboxEvent());
+        this._events.set("stop_song", new StopPlayingEvent());
+        this._events.set("play_song", new PlaySongEvent());
+        this._events.set("playlist", new PlaylistEvent());
+        this._events.set("dispose_playlist", new DisposePlaylistEvent());
     }
 
     public SendMessage(message: OutgoingMessage) : void{

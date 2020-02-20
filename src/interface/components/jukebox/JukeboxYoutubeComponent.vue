@@ -12,6 +12,7 @@ import YouTubePlayer from 'youtube-player';
 @Component
 export default class JukeboxYoutubeComponent extends Vue {
     player: any = undefined;
+    currentState: number = -1;
     stateNames = {
         '-1': 'unstarted',
         0: 'ended',
@@ -32,20 +33,54 @@ export default class JukeboxYoutubeComponent extends Vue {
         this.player.on('ready', ()=>  {
             console.log('Player1 is ready.');
         });
-        this.player.on('stateChange', function (event:any) {
+        this.player.on('stateChange',  (event:any) => {
+            this.currentState = event.data;
             if (event.data == 0) {
-                console.log("ended video");
+                this.onVideoEnd();
             }
+        });
+
+        this.$on("play", () => {
+            this.onPlayStop();
+        });
+
+        this.$on("playSong", (index: number) => {
+            this.playSong(index);
         });
     }
 
+    playSong(index: number) {
+        if(index < Store.GetInstance().jukebox.playlist.length) {
+            Store.GetInstance().jukebox.currentIndex = index;
+            this.player.loadVideoById(Store.GetInstance().jukebox.playlist[index].videoId);
+            this.player.playVideo();
+        }
+    }
+
     onPlaylist() {
-        this.player.loadVideoById(Store.GetInstance().jukebox.playlist[0].videoId);
-        this.player.playVideo();
+        //idk
     }
 
     onDisposePlaylist() {
         this.player.stopVideo();
+    }
+
+    onPlayStop() {
+        if(this.currentState == 1) {
+            this.player.pauseVideo();
+        } else {
+            this.playSong(Store.GetInstance().jukebox.currentIndex);
+        }
+    }
+
+    onVideoEnd() {
+        if(Store.GetInstance().jukebox.currentIndex < Store.GetInstance().jukebox.playlist.length - 1) {
+            Store.GetInstance().jukebox.currentIndex++;
+            this.playSong(Store.GetInstance().jukebox.currentIndex);
+        }
+        else {
+            Store.GetInstance().jukebox.currentIndex = 0;
+        }
     }
 }
 </script>
