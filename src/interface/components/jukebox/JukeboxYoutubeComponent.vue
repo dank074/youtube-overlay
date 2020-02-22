@@ -44,8 +44,20 @@ export default class JukeboxYoutubeComponent extends Vue {
             this.onPlayStop();
         });
 
+        this.$on("next", () => {
+            this.onPlayNext();
+        });
+
+        this.$on("prev", () => {
+            this.onPlayPrev();
+        });
+
         this.$on("playSong", (index: number) => {
             this.playSong(index);
+        });
+
+        this.$on("removeSong", (index:number) => {
+            this.onRemoveSong(index);
         });
     }
 
@@ -67,20 +79,50 @@ export default class JukeboxYoutubeComponent extends Vue {
 
     onPlayStop() {
         if(this.currentState == 1) {
-            this.player.pauseVideo();
+            this.player.stopVideo();
+            Store.GetInstance().jukebox.playing = false;
         } else {
             this.playSong(Store.GetInstance().jukebox.currentIndex);
+            Store.GetInstance().jukebox.playing = true;
         }
     }
 
-    onVideoEnd() {
+    onPlayPrev() {
+        if(Store.GetInstance().jukebox.currentIndex > 0) {
+            Store.GetInstance().jukebox.currentIndex--;
+        } 
+        this.playSong(Store.GetInstance().jukebox.currentIndex);
+    }
+
+    onPlayNext() {
         if(Store.GetInstance().jukebox.currentIndex < Store.GetInstance().jukebox.playlist.length - 1) {
             Store.GetInstance().jukebox.currentIndex++;
-            this.playSong(Store.GetInstance().jukebox.currentIndex);
         }
         else {
             Store.GetInstance().jukebox.currentIndex = 0;
         }
+        this.playSong(Store.GetInstance().jukebox.currentIndex);
+    }
+
+    onRemoveSong(index: number) {        
+        if(Store.GetInstance().jukebox.playlist.length == 0) {
+            this.player.stopVideo();
+        }
+        if(index == Store.GetInstance().jukebox.currentIndex) {
+            if(index > Store.GetInstance().jukebox.playlist.length - 1 && Store.GetInstance().jukebox.playlist.length > 0) {
+                Store.GetInstance().jukebox.currentIndex = Store.GetInstance().jukebox.playlist.length - 1;
+            }
+            if(Store.GetInstance().jukebox.playlist.length > 0) {
+                this.playSong(Store.GetInstance().jukebox.currentIndex);
+            }
+        }
+        else if(index < Store.GetInstance().jukebox.currentIndex && Store.GetInstance().jukebox.currentIndex > 0) {
+            Store.GetInstance().jukebox.currentIndex--;
+        }
+    }
+
+    onVideoEnd() {
+        this.onPlayNext();
     }
 }
 </script>

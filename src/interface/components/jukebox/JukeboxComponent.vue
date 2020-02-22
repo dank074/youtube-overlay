@@ -6,10 +6,13 @@
     <div class="box_body">
       <ul class="playlist-list">
         <h1 style="display: inline-block;">Playlist</h1>
-        <button style="margin: 15px;" v-on:click="PlayStop()">Play/Stop</button>
-        <li v-for="(song,index) in data.jukebox.playlist" :key="index" v-bind:class="{ active: index == data.jukebox.currentIndex }" v-on:click="ClickOnPlaylistItem(index)">
+        <img src="~@/assets/prev.png" v-on:click="PlayPrev()" class="controls">
+        <img v-if="!data.jukebox.playing" src="~@/assets/play.png" v-on:click="PlayStop()" class="controls">
+        <img v-if="data.jukebox.playing" src="~@/assets/pause.png" v-on:click="PlayStop()" class="controls">
+        <img src="~@/assets/skip.png" v-on:click="PlayNext()" class="controls">
+        <li v-for="(song,index) in data.jukebox.playlist" :key="index" v-bind:class="{ active: index == data.jukebox.currentIndex }">
           {{ song.name }}
-          <span class="artist">{{song.channel}}</span>
+          <span class="artist">{{song.channel}} <img src="~@/assets/minus.png" v-on:click="RemoveSong(index)" class="controls"></span>
         </li>
       </ul>
       <ul class="yt-results" v-if="searchResults != null">
@@ -78,6 +81,19 @@ export default class JukeboxComponent extends Vue {
     //this.$emit('play');
   }
 
+  PlayNext() {
+    (this.$parent.$refs.jukeboxPlayer as JukeboxYoutubeComponent).$emit("next");
+  }
+
+  PlayPrev() {
+    (this.$parent.$refs.jukeboxPlayer as JukeboxYoutubeComponent).$emit("prev");
+  }
+
+  RemoveSong(index: number) {
+    Store.GetInstance().jukebox.playlist.splice(index, 1);
+    (this.$parent.$refs.jukeboxPlayer as JukeboxYoutubeComponent).$emit("removeSong", index);
+  }
+
   ClickOnPlaylistItem(index: number): void {
     (this.$parent.$refs.jukeboxPlayer as JukeboxYoutubeComponent).$emit("playSong", index);
   }
@@ -130,23 +146,19 @@ $mobile-bp: 600px;
     font-weight: bold;
     color: #222;
     padding: 0;
-    cursor: pointer;
     padding: 20px 10px;
     background: #ffffff;
     border-bottom: 1px solid $gray;
     &:last-child {
       border-bottom: 0;
     }
-    &:hover {
+    //&:hover {
+    //  background-color: #3498db;
+    //  color: #ffffff;
+    //}
+    &.active {
       background-color: #3498db;
       color: #ffffff;
-    }
-    &.active {
-      background-color: #ccdade;
-      color: #565d64;
-    }
-    span {
-      pointer-events: none;
     }
     .artist {
       display: block;
@@ -265,6 +277,14 @@ section:before {
 main {
   width: 80%;
   margin: 0 auto;
+}
+
+.controls {
+  cursor:pointer;
+  margin-left: 10px;
+  &:hover {
+    opacity: 0.8;
+  }
 }
 
 .yt-results {

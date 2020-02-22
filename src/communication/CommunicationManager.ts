@@ -48,7 +48,7 @@ export default class CommunicationManager {
     }
 
     public OnMessage(message: string) : void{
-        let json = JSON.parse(message);
+        let json = JSON.parse(message.replace("&#47;", "/"));
         let parser = this._events.get(json.header);
         if(parser) {
             parser.Parse(json.data);
