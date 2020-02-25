@@ -8,6 +8,8 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import Store from '@/store/Store';
 import YouTubePlayer from 'youtube-player';
+import CommunicationManager from '../../../communication/CommunicationManager';
+import SongEndedComposer from '../../../communication/outgoing/jukebox/SongEndedComposer';
 
 @Component
 export default class JukeboxYoutubeComponent extends Vue {
@@ -31,7 +33,7 @@ export default class JukeboxYoutubeComponent extends Vue {
     mounted() {
         this.player = YouTubePlayer('jukebox-player');
         this.player.on('ready', ()=>  {
-            console.log('Player1 is ready.');
+            console.log('jukebox-player ready.');
         });
         this.player.on('stateChange',  (event:any) => {
             this.currentState = event.data;
@@ -40,8 +42,8 @@ export default class JukeboxYoutubeComponent extends Vue {
             }
         });
 
-        this.$on("play", () => {
-            this.onPlayStop();
+        this.$on("play", (playing: boolean) => {
+            this.onPlayStop(playing);
         });
 
         this.$on("next", () => {
@@ -66,19 +68,12 @@ export default class JukeboxYoutubeComponent extends Vue {
             Store.GetInstance().jukebox.currentIndex = index;
             this.player.loadVideoById(Store.GetInstance().jukebox.playlist[index].videoId);
             this.player.playVideo();
+            Store.GetInstance().jukebox.playing = true;
         }
     }
 
-    onPlaylist() {
-        //idk
-    }
-
-    onDisposePlaylist() {
-        this.player.stopVideo();
-    }
-
-    onPlayStop() {
-        if(this.currentState == 1) {
+    onPlayStop(playing: boolean) {
+        if(!playing) {
             this.player.stopVideo();
             Store.GetInstance().jukebox.playing = false;
         } else {
@@ -104,7 +99,8 @@ export default class JukeboxYoutubeComponent extends Vue {
         this.playSong(Store.GetInstance().jukebox.currentIndex);
     }
 
-    onRemoveSong(index: number) {        
+    onRemoveSong(index: number) {
+        Store.GetInstance().jukebox.playlist.splice(index, 1);        
         if(Store.GetInstance().jukebox.playlist.length == 0) {
             this.player.stopVideo();
         }
@@ -122,6 +118,7 @@ export default class JukeboxYoutubeComponent extends Vue {
     }
 
     onVideoEnd() {
+        CommunicationManager.getInstance().SendMessage(new SongEndedComposer());
         this.onPlayNext();
     }
 }

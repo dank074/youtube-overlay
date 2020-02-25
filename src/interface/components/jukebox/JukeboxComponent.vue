@@ -22,7 +22,7 @@
         <li class="results-container" v-for="n in searchResults.length" :key="n">
           <img :src="searchResults[n-1].snippet.thumbnails.default.url" />
           <span class="results-stat">{{ searchResults[n-1].snippet.title }}</span>
-          <button type="button" class="ant-btn ant-btn-primary" v-on:click="ClickOnSearchResult(n-1)">Add</button>
+          <button type="button" class="ant-btn ant-btn-primary" v-on:click="AddSong(n-1)">Add</button>
         </li>
       </ul>
     </div>
@@ -38,6 +38,12 @@ import Constants from "@/utils/Constants";
 import axios from "axios";
 import Song from "@/store/models/Song";
 import JukeboxYoutubeComponent from "./JukeboxYoutubeComponent.vue";
+import CommunicationManager from '../../../communication/CommunicationManager';
+import AddSongComposer from '@/communication/outgoing/jukebox/AddSongComposer';
+import RemoveSongComposer from '@/communication/outgoing/jukebox/RemoveSongComposer';
+import PreviousSongComposer from '@/communication/outgoing/jukebox/PreviousSongComposer';
+import NextSongComposer from '@/communication/outgoing/jukebox/NextSongComposer';
+import PlayStopComposer from '@/communication/outgoing/jukebox/PlayStopComposer';
 
 @Component({
   directives: {
@@ -77,36 +83,28 @@ export default class JukeboxComponent extends Vue {
   }
 
   PlayStop() {
-    (this.$parent.$refs.jukeboxPlayer as JukeboxYoutubeComponent).$emit("play");
-    //this.$emit('play');
+    CommunicationManager.getInstance().SendMessage(new PlayStopComposer(!Store.GetInstance().jukebox.playing));
   }
 
   PlayNext() {
-    (this.$parent.$refs.jukeboxPlayer as JukeboxYoutubeComponent).$emit("next");
+    CommunicationManager.getInstance().SendMessage(new NextSongComposer());
   }
 
   PlayPrev() {
-    (this.$parent.$refs.jukeboxPlayer as JukeboxYoutubeComponent).$emit("prev");
+    CommunicationManager.getInstance().SendMessage(new PreviousSongComposer())
   }
 
   RemoveSong(index: number) {
-    Store.GetInstance().jukebox.playlist.splice(index, 1);
-    (this.$parent.$refs.jukeboxPlayer as JukeboxYoutubeComponent).$emit("removeSong", index);
+    CommunicationManager.getInstance().SendMessage(new RemoveSongComposer(index));
   }
 
-  ClickOnPlaylistItem(index: number): void {
-    (this.$parent.$refs.jukeboxPlayer as JukeboxYoutubeComponent).$emit("playSong", index);
-  }
-
-  ClickOnSearchResult(index: number): void {
+  AddSong(index: number): void {
     if (this.searchResults[index].id.videoId != undefined) {
-      Store.GetInstance().jukebox.playlist.push(
-        new Song(
+     CommunicationManager.getInstance().SendMessage(new AddSongComposer(new Song(
           this.searchResults[index].snippet.title,
           this.searchResults[index].id.videoId,
           this.searchResults[index].snippet.channelTitle
-        )
-      );
+        )));
     }
   }
 
@@ -120,6 +118,26 @@ export default class JukeboxComponent extends Vue {
 $gray: #ccc;
 $mobile-bp: 600px;
 
+h1 {
+    display: block;
+    font-size: 2em;
+    margin-block-start: 0.67em;
+    margin-block-end: 0.67em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+    color: #565d64;
+}
+h2 {
+    display: block;
+    font-size: 1.5em;
+    margin-block-start: 0.83em;
+    margin-block-end: 0.83em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+    color: black;
+}
 .playlist-list {
   overflow-y: scroll;
   border: 1px solid $gray;
@@ -305,6 +323,7 @@ main {
     .results-stat {
       display: flex;
       flex-direction: column;
+      color: black;
     }
     img {
       width: 120px;
