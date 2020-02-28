@@ -17,8 +17,13 @@
       </ul>
       <ul class="yt-results" v-if="searchResults != null">
         <h2>Add Music</h2>
-        <input v-model="searchKeyword" type="text" size="32" class="box_input" style="width:200px;margin-top:5px;"/>
-        <button type="button" class="box_button" v-on:click="Search" style="width:100px;">Search</button>
+        <input type="radio" v-model="mode" value="1">Video URL
+        <input type="radio" v-model="mode" value="2">Search keyword
+        <input v-if="mode == 1" v-model="videoid" type="text" size="32" value="" :placeholder="'https://www.youtube.com/watch?v=' + data.youtubeVideo.videoId" class="box_input">
+        <input v-if="mode == 1" v-model="name" type="text" size="32" value="" placeholder="Song name" class="box_input">
+        <button v-if="mode == 1" type="button" class="box_button" v-on:click="SubmitUrl">Add</button>
+        <input v-if="mode == 2" v-model="searchKeyword" type="text" size="32" class="box_input"/>
+        <button v-if="mode == 2" type="button" class="box_button" v-on:click="Search">Search</button>
         <li class="results-container" v-for="n in searchResults.length" :key="n">
           <img :src="searchResults[n-1].snippet.thumbnails.default.url" />
           <span class="results-stat">{{ searchResults[n-1].snippet.title }}</span>
@@ -44,6 +49,7 @@ import RemoveSongComposer from '@/communication/outgoing/jukebox/RemoveSongCompo
 import PreviousSongComposer from '@/communication/outgoing/jukebox/PreviousSongComposer';
 import NextSongComposer from '@/communication/outgoing/jukebox/NextSongComposer';
 import PlayStopComposer from '@/communication/outgoing/jukebox/PlayStopComposer';
+import RegexUtility from '@/utils/RegexUtility';
 
 @Component({
   directives: {
@@ -53,6 +59,9 @@ import PlayStopComposer from '@/communication/outgoing/jukebox/PlayStopComposer'
 export default class JukeboxComponent extends Vue {
   searchKeyword: string = "";
   searchResults: any = [];
+  mode: number = 1;
+  videoid: string = "";
+  name: string = "";
 
   data() {
     return {
@@ -80,6 +89,24 @@ export default class JukeboxComponent extends Vue {
       .catch((error: string) => {
         Logger.Log(error);
       });
+  }
+
+  SubmitUrl(): void {
+    if(this.videoid == "" || this.name == "") {
+      alert("Fill out all form fields"); return;
+    }
+    let id = RegexUtility.getVideoIdFromYoutubeURL(this.videoid);
+    if(id != "") {
+      this.videoid = id;
+      CommunicationManager.getInstance().SendMessage(new AddSongComposer(new Song(
+        this.name,
+        this.videoid,
+        "unknown"
+      )));
+    }
+    else {
+      alert("Invalid youtube url")
+    }
   }
 
   PlayStop() {
