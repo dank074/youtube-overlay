@@ -16,6 +16,7 @@ import PlaylistEvent from './incoming/jukebox/PlaylistEvent';
 import DisposePlaylistEvent from './incoming/jukebox/DisposePlaylistEvent';
 import AddSongEvent from './incoming/jukebox/AddSongEvent';
 import RemoveSongEvent from './incoming/jukebox/RemoveSongEvent';
+import TwitchVideoEvent from './incoming/youtube/TwitchVideoEvent';
 
 export default class CommunicationManager {
     private _events : Map<String, IncomingMessage>;
@@ -41,6 +42,7 @@ export default class CommunicationManager {
         this._events.set("remove_song", new RemoveSongEvent());
         this._events.set("playlist", new PlaylistEvent());
         this._events.set("dispose_playlist", new DisposePlaylistEvent());
+        this._events.set("twitch", new TwitchVideoEvent());
     }
 
     public SendMessage(message: OutgoingMessage) : void{

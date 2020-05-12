@@ -6,6 +6,7 @@
     <CommandsComponent/>
     <JukeboxComponent/>
     <JukeboxYoutubeComponent ref="jukeboxPlayer"/>
+    <TwitchComponent/>
   </div>
 </template>
 
@@ -17,6 +18,7 @@ import SlotMachineComponent from "./components/slot-machine/SlotMachineComponent
 import CommandsComponent from "./components/CommandsComponent.vue";
 import JukeboxComponent from "./components/jukebox/JukeboxComponent.vue";
 import JukeboxYoutubeComponent from './components/jukebox/JukeboxYoutubeComponent.vue';
+import TwitchComponent from './components/twitch/TwitchComponent.vue';
 
 @Component({
   components: {
@@ -25,7 +27,8 @@ import JukeboxYoutubeComponent from './components/jukebox/JukeboxYoutubeComponen
     SlotMachineComponent,
     CommandsComponent,
     JukeboxComponent,
-    JukeboxYoutubeComponent
+    JukeboxYoutubeComponent,
+    TwitchComponent
   }
 })
 export default class App extends Vue {

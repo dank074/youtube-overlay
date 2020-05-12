@@ -1,10 +1,12 @@
 <template>
     <div v-show="data.youtubeVideo.open" class="box" v-bind:style="CenterBox" v-draggable="draggableValue">
         <div class="box_head" :ref="handleId">
+            <div class="box_edit" v-if="data.youtubeVideo.itemId != 0" v-on:click="Edit"></div>
             <div class="box_cross" v-on:click="Close"></div>
                     Youtube Video
         </div>  
         <YoutubeVideoComponent/>
+        <YoutubeEditComponent/>
 	</div>
 </template>
 
@@ -13,10 +15,12 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Draggable } from 'draggable-vue-directive';
 import Store from '@/store/Store';
 import YoutubeVideoComponent from './YoutubeVideoComponent.vue';
+import YoutubeEditComponent from './YoutubeEditComponent.vue';
 
 @Component({
     components: {
-        YoutubeVideoComponent
+        YoutubeVideoComponent,
+        YoutubeEditComponent
     },
     directives: {
     Draggable,
@@ -39,6 +43,10 @@ export default class YoutubeComponent extends Vue {
 
     Close (): void {
         Store.GetInstance().youtubeVideo.open = false;
+    }
+
+    Edit(): void {
+        Store.GetInstance().youtubeVideo.editMode = true;
     }
 
     CenterBox() {

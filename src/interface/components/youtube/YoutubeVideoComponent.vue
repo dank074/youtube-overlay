@@ -1,5 +1,5 @@
 <template>
-    <div class="box_body" style="border: none;background-color: #000;" v-if="data.youtubeVideo.open == true">
+    <div class="box_body" style="border: none;background-color: #000;" v-if="data.youtubeVideo.editMode == false && data.youtubeVideo.open == true">
         <iframe width="560" height="315" :src="getVideoUrl()" frameborder="0" allowfullscreen allow="autoplay"></iframe>
     </div>
 </template>
