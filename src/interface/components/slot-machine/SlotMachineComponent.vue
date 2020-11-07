@@ -38,6 +38,7 @@ import CommunicationManager from "@/communication/CommunicationManager";
 import RequestSpinSlotMachineComposer from "@/communication/outgoing/general/RequestSpinSlotMachineComposer";
 import RequestCreditsComposer from "@/communication/outgoing/general/RequestCreditsComposer";
 import { Draggable } from 'draggable-vue-directive';
+import App from '@/App';
 
 @Component({
   components: {
@@ -62,7 +63,7 @@ export default class SlotMachineComponent extends Vue {
   }
 
   mounted() {
-    this.$on("results", () => {
+    App.interfaceManager.bus.$on("results", () => {
       this.onResults();
     });
     this.$data.draggableValue.handle = this.$refs[this.$data.handleId];
@@ -94,7 +95,7 @@ export default class SlotMachineComponent extends Vue {
     ) {
       this.won = 0;
       let itemId = Store.GetInstance().slotMachine.itemId;
-      CommunicationManager.getInstance().SendMessage(
+      App.communicationManager.sendMessage(
         new RequestSpinSlotMachineComposer(itemId, this.bet)
       );
     }
@@ -111,7 +112,7 @@ export default class SlotMachineComponent extends Vue {
           let audio = Store.GetInstance().slotMachine.audio.get("win");
           if (audio) audio.play();
         }
-        CommunicationManager.getInstance().SendMessage(new RequestCreditsComposer());
+        App.communicationManager.sendMessage(new RequestCreditsComposer());
         this.won = Store.GetInstance().slotMachine.payout;
       } else {
         console.log("lost");

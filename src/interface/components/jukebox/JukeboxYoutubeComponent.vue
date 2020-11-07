@@ -10,6 +10,7 @@ import Store from '@/store/Store';
 import YouTubePlayer from 'youtube-player';
 import CommunicationManager from '../../../communication/CommunicationManager';
 import SongEndedComposer from '../../../communication/outgoing/jukebox/SongEndedComposer';
+import App from '@/App';
 
 @Component
 export default class JukeboxYoutubeComponent extends Vue {
@@ -42,23 +43,23 @@ export default class JukeboxYoutubeComponent extends Vue {
             }
         });
 
-        this.$on("play", (playing: boolean) => {
+        App.interfaceManager.bus.$on("play", (playing: boolean) => {
             this.onPlayStop(playing);
         });
 
-        this.$on("next", () => {
+        App.interfaceManager.bus.$on("next", () => {
             this.onPlayNext();
         });
 
-        this.$on("prev", () => {
+        App.interfaceManager.bus.$on("prev", () => {
             this.onPlayPrev();
         });
 
-        this.$on("playSong", (index: number) => {
+        App.interfaceManager.bus.$on("playSong", (index: number) => {
             this.playSong(index);
         });
 
-        this.$on("removeSong", (index:number) => {
+        App.interfaceManager.bus.$on("removeSong", (index:number) => {
             this.onRemoveSong(index);
         });
     }
@@ -118,7 +119,7 @@ export default class JukeboxYoutubeComponent extends Vue {
     }
 
     onVideoEnd() {
-        CommunicationManager.getInstance().SendMessage(new SongEndedComposer());
+        App.communicationManager.sendMessage(new SongEndedComposer());
         this.onPlayNext();
     }
 }

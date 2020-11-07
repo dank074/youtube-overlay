@@ -20,14 +20,13 @@ import TwitchVideoEvent from './incoming/youtube/TwitchVideoEvent';
 
 export default class CommunicationManager {
     private _events : Map<String, IncomingMessage>;
-    private static _instance: CommunicationManager = new CommunicationManager();
 
     constructor() {
         this._events = new Map<String, IncomingMessage>();
-        this.RegisterMessages();
+        this.registerMessages();
     }
 
-    private RegisterMessages() {
+    private registerMessages(): void {
         this._events.set("youtube_tv", new YoutubeTVEvent());
         this._events.set("mention", new MentionEvent());
         this._events.set("slot_machine", new SlotMachineEvent());
@@ -45,7 +44,7 @@ export default class CommunicationManager {
         this._events.set("twitch", new TwitchVideoEvent());
     }
 
-    public SendMessage(message: OutgoingMessage) : void{
+    public sendMessage(message: OutgoingMessage): void {
         if (!Store.GetInstance().connected || !message)
             return;
         let swfObject: any = document.querySelector('object, embed') as any;
@@ -53,8 +52,8 @@ export default class CommunicationManager {
             swfObject.openroom(JSON.stringify(message));
     }
 
-    public OnMessage(message: string) : void{
-        let json = JSON.parse(message.replace("&#47;", "/"));
+    public onMessage(message: string): void {
+        let json = JSON.parse(message.replace(/&#47;/g, "/"));
         let parser = this._events.get(json.header);
         if(parser) {
             parser.Parse(json.data);
@@ -63,11 +62,7 @@ export default class CommunicationManager {
         }
     }
 
-    public getMessages() : Map<String, IncomingMessage> {
+    public get events(): Map<String, IncomingMessage> {
         return this._events;
-    }
-
-    public static getInstance(): CommunicationManager {
-        return this._instance;
     }
 }

@@ -26,6 +26,7 @@ import Constants from '@/utils/Constants';
 import RegexUtility from '../../../utils/RegexUtility';
 import CommunicationManager from '../../../communication/CommunicationManager';
 import Store from '../../../store/Store';
+import App from '@/App';
 
 @Component
 export default class YoutubeEditComponent extends Vue {
@@ -43,7 +44,7 @@ export default class YoutubeEditComponent extends Vue {
    SendEdit(): void {
         if (this.videoid == "")
             return;
-        CommunicationManager.getInstance().SendMessage(new EditTVComposer(Store.GetInstance().youtubeVideo.itemId, this.videoid));
+        App.communicationManager.sendMessage(new EditTVComposer(Store.GetInstance().youtubeVideo.itemId, this.videoid));
         Store.GetInstance().youtubeVideo.open = false;
         this.videoid = "";
         this.searchKeyword = "";

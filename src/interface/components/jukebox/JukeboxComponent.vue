@@ -50,6 +50,7 @@ import PreviousSongComposer from '@/communication/outgoing/jukebox/PreviousSongC
 import NextSongComposer from '@/communication/outgoing/jukebox/NextSongComposer';
 import PlayStopComposer from '@/communication/outgoing/jukebox/PlayStopComposer';
 import RegexUtility from '@/utils/RegexUtility';
+import App from '@/App';
 
 @Component({
   directives: {
@@ -98,7 +99,7 @@ export default class JukeboxComponent extends Vue {
     let id = RegexUtility.getVideoIdFromYoutubeURL(this.videoid);
     if(id != "") {
       this.videoid = id;
-      CommunicationManager.getInstance().SendMessage(new AddSongComposer(new Song(
+      App.communicationManager.sendMessage(new AddSongComposer(new Song(
         this.name,
         this.videoid,
         "unknown"
@@ -110,24 +111,24 @@ export default class JukeboxComponent extends Vue {
   }
 
   PlayStop() {
-    CommunicationManager.getInstance().SendMessage(new PlayStopComposer(!Store.GetInstance().jukebox.playing));
+    App.communicationManager.sendMessage(new PlayStopComposer(!Store.GetInstance().jukebox.playing));
   }
 
   PlayNext() {
-    CommunicationManager.getInstance().SendMessage(new NextSongComposer());
+    App.communicationManager.sendMessage(new NextSongComposer());
   }
 
   PlayPrev() {
-    CommunicationManager.getInstance().SendMessage(new PreviousSongComposer())
+    App.communicationManager.sendMessage(new PreviousSongComposer())
   }
 
   RemoveSong(index: number) {
-    CommunicationManager.getInstance().SendMessage(new RemoveSongComposer(index));
+    App.communicationManager.sendMessage(new RemoveSongComposer(index));
   }
 
   AddSong(index: number): void {
     if (this.searchResults[index].id.videoId != undefined) {
-     CommunicationManager.getInstance().SendMessage(new AddSongComposer(new Song(
+     App.communicationManager.sendMessage(new AddSongComposer(new Song(
           this.searchResults[index].snippet.title,
           this.searchResults[index].id.videoId,
           this.searchResults[index].snippet.channelTitle

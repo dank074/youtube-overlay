@@ -1,7 +1,5 @@
 import Store from './store/Store';
-import CommunicationManager from './communication/CommunicationManager';
-import InteractionManager from './interaction/InteractionManager';
-import InterfaceManager from './interface/InterfaceManager';
+import App from './App';
 
 declare global {
   interface Window {
@@ -23,15 +21,16 @@ declare global {
   }
 }
 
+App.init();
+
 if(process.env.NODE_ENV == 'production') {
   window.FlashExternalInterface.openHabblet = function(arg1: string, arg2: string) {
-    CommunicationManager.getInstance().OnMessage(arg1);
+    App.communicationManager.onMessage(arg1);
   };
   
   window.FlashExternalInterface.legacyTrack = function(arg1: string, arg2: string, arg3: string) {
     if (arg1 == "authentication") {
       Store.GetInstance().connected = true;
-      InteractionManager.init();
     }
   };
   
@@ -45,4 +44,4 @@ if(process.env.NODE_ENV == 'production') {
   };
 }
 
-InterfaceManager.Init();
+App.interfaceManager.initInterface();

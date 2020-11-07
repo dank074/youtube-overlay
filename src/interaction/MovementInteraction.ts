@@ -1,7 +1,7 @@
 import Interaction from './Interaction';
 import { KeyboardKeys } from './KeyboardKeys';
 import MoveAvatarComposer from '@/communication/outgoing/general/MoveAvatarComposer';
-import CommunicationManager from '@/communication/CommunicationManager';
+import App from '@/App';
 
 export default class MovementInteraction implements Interaction {
     public enabled: boolean;
@@ -25,7 +25,7 @@ export default class MovementInteraction implements Interaction {
                 this._walkInterval = setTimeout(() => {
                     if (this.walking)
                         return;
-                    CommunicationManager.getInstance().SendMessage(new MoveAvatarComposer("stop"));
+                    App.communicationManager.sendMessage(new MoveAvatarComposer("stop"));
                 }, 500);
             }
         }
@@ -52,7 +52,7 @@ export default class MovementInteraction implements Interaction {
                 default:
                     return;
             }
-            CommunicationManager.getInstance().SendMessage(new MoveAvatarComposer(direction));
+            App.communicationManager.sendMessage(new MoveAvatarComposer(direction));
         }
     }
 }

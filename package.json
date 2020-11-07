@@ -7,23 +7,23 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "@types/youtube-player": "^5.5.2",
+    "@types/youtube-player": "^5.5.3",
     "axios": "^0.19.2",
-    "core-js": "^3.4.4",
+    "core-js": "^3.7.0",
     "draggable-vue-directive": "^2.1.0",
-    "vue": "^2.6.10",
-    "vue-class-component": "^7.2.3",
-    "vue-property-decorator": "^8.4.0",
+    "vue": "^2.6.12",
+    "vue-class-component": "^7.2.6",
+    "vue-property-decorator": "^8.5.1",
     "youtube-player": "^5.5.2"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.2.2",
-    "@vue/cli-plugin-typescript": "^4.2.2",
-    "@vue/cli-service": "^4.2.2",
-    "sass": "^1.26.1",
+    "@vue/cli-plugin-babel": "^4.5.8",
+    "@vue/cli-plugin-typescript": "^4.5.8",
+    "@vue/cli-service": "^4.5.8",
+    "sass": "^1.29.0",
     "sass-loader": "^8.0.0",
     "typescript": "~3.5.3",
-    "vue-template-compiler": "^2.6.10"
+    "vue-template-compiler": "^2.6.12"
   },
   "browserslist": [
     "> 1%",

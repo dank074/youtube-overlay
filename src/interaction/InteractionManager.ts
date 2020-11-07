@@ -2,27 +2,18 @@ import MovementInteraction from './MovementInteraction';
 import Interaction from './Interaction';
 
 export default class InteractionManager {
-    private interactions: Map<String, Interaction>;
-    private static _instance: InteractionManager;
+    private _interactions: Map<String, Interaction>;
 
     constructor() {
-        this.interactions = new Map<String, Interaction>();
-        this.RegisterInteractions();
+        this._interactions = new Map<String, Interaction>();
+        this.registerInteractions();
     }
 
-    private RegisterInteractions() {
-        this.interactions.set("movement", new MovementInteraction());
+    private registerInteractions() {
+        this._interactions.set("movement", new MovementInteraction());
     }
 
-    public getInteractions(): Map<String, Interaction> {
-        return this.interactions;
-    }
-
-    public static init(): void {
-        this._instance = new InteractionManager();
-    }
-
-    public static getInstance(): InteractionManager {
-        return this._instance;
+    public get interactions(): Map<String, Interaction> {
+        return this._interactions;
     }
 }

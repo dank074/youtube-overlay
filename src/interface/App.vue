@@ -2,10 +2,10 @@
   <div id="app">
     <YoutubeComponent/>
     <MentionComponent/>
-    <SlotMachineComponent ref="slotmachine"/>
+    <SlotMachineComponent/>
     <CommandsComponent/>
     <JukeboxComponent/>
-    <JukeboxYoutubeComponent ref="jukeboxPlayer"/>
+    <JukeboxYoutubeComponent/>
     <TwitchComponent/>
   </div>
 </template>

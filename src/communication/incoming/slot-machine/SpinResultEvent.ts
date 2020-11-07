@@ -1,7 +1,6 @@
 import IncomingMessage from '../IncomingMessage';
 import Store from '@/store/Store';
-import InterfaceManager from '@/interface/InterfaceManager';
-import SlotMachineComponent from '@/interface/components/slot-machine/SlotMachineComponent.vue';
+import App from '@/App';
 
 export default class SpinResultEvent implements IncomingMessage {
     
@@ -12,6 +11,6 @@ export default class SpinResultEvent implements IncomingMessage {
         Store.GetInstance().slotMachine.won = data.won;
         Store.GetInstance().slotMachine.payout = data.payout;
         Store.GetInstance().slotMachine.isSpinning = true;
-        (InterfaceManager.Container.$root.$children[0].$refs.slotmachine as SlotMachineComponent).$emit("results");
+        App.interfaceManager.bus.$emit("results");
     }
 }
