@@ -1,26 +1,34 @@
-import YoutubeVideo from './models/YoutubeVideo';
-import Mention from './models/Mention';
-import User from './models/User';
-import SlotMachine from './models/SlotMachine';
-import SessionData from './models/SessionData';
-import Jukebox from './models/Jukebox';
-import Twitch from './models/Twitch';
+import { RootState } from './types';
+import Vue from 'vue';
+import Vuex, { StoreOptions } from 'vuex';
+import { session } from './modules/session';
+import { commands } from './modules/commands';
+import { jukebox } from './modules/jukebox';
+import { slotmachine } from './modules/slotmachine';
+import { youtubeplayer } from './modules/youtubeplayer';
+import { twitchplayer } from './modules/twitchplayer';
 
-export default class Store {
-    private static _instance: Store = new Store();
+Vue.use(Vuex);
 
-    connected: boolean = false;
-    
-    youtubeVideo: YoutubeVideo = new YoutubeVideo();
-    twitch: Twitch = new Twitch();
-    mentions: Mention[] = [];
-    session: SessionData = new SessionData();
-    commands: string[] = [];
-    commands_open: boolean = false;
-    slotMachine: SlotMachine = new SlotMachine();
-    jukebox: Jukebox = new Jukebox();
+const store: StoreOptions<RootState>  = {
+    state: {
+        connected: false    
+    },
 
-    public static GetInstance() {
-        return Store._instance;
+    modules: {
+        session,
+        commands,
+        jukebox,
+        slotmachine,
+        youtubeplayer,
+        twitchplayer
+    },
+
+    mutations: {
+        setConnected(state: any, val: boolean)  {
+            state.connected = val;
+        }
     }
-}
+};
+
+export default new Vuex.Store<RootState>(store);

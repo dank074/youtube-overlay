@@ -1,4 +1,3 @@
-import Store from './store/Store';
 import App from './App';
 
 declare global {
@@ -22,6 +21,7 @@ declare global {
 }
 
 App.init();
+App.interfaceManager.initInterface();
 
 if(process.env.NODE_ENV == 'production') {
   window.FlashExternalInterface.openHabblet = function(arg1: string, arg2: string) {
@@ -30,7 +30,7 @@ if(process.env.NODE_ENV == 'production') {
   
   window.FlashExternalInterface.legacyTrack = function(arg1: string, arg2: string, arg3: string) {
     if (arg1 == "authentication") {
-      Store.GetInstance().connected = true;
+      App.interfaceManager.container.$store.commit("setConnected", true);
     }
   };
   
@@ -43,5 +43,3 @@ if(process.env.NODE_ENV == 'production') {
     return txt;
   };
 }
-
-App.interfaceManager.initInterface();

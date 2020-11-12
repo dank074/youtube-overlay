@@ -1,5 +1,6 @@
 import IncomingMessage from '../IncomingMessage';
-import Store from '@/store/Store';
+import Store from '@/store/store';
+import App from '@/App';
 
 export default class TwitchVideoEvent implements IncomingMessage{
     Parse(data: any): void {
@@ -8,7 +9,7 @@ export default class TwitchVideoEvent implements IncomingMessage{
         if(channel == "")
             return;
 
-        Store.GetInstance().twitch.open = true;
-        Store.GetInstance().twitch.channel = channel;
+        App.interfaceManager.container.$store.commit('twitchplayer/setChannel', channel);
+        App.interfaceManager.container.$store.commit('twitchplayer/setOpen', true);
     }
 }

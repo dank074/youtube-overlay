@@ -2,7 +2,7 @@
   <div
     class="box_body"
     style="border: none;background-color: #000;"
-    v-if="data.twitch.open == true"
+    v-if="twitchplayer.open"
   >
     <iframe
       :src="getVideoUrl()"
@@ -16,19 +16,26 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import Store from "@/store/Store";
+import Component from "vue-class-component";
+import { State } from 'vuex-class';
+import Vue from 'vue';
+import { TwitchPlayerState } from '@/store/types';
 
 @Component
 export default class TwitchVideoComponent extends Vue {
+  @State('twitchplayer') twitchplayer!: TwitchPlayerState;
+
   data() {
     return {
-      data: Store.GetInstance()
     };
   }
 
+  created() {
+    this.twitchplayer;
+  }
+
   getVideoUrl(): string {
-    return "https://player.twitch.tv/?channel=" + Store.GetInstance().twitch.channel + "&parent=" + window.location.hostname + "&autoplay=true&muted=false"
+    return "https://player.twitch.tv/?channel=" + this.twitchplayer.channel + "&parent=" + window.location.hostname + "&autoplay=true&muted=false"
   }
 }
 </script>

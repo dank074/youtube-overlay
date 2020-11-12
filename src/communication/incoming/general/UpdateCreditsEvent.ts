@@ -1,8 +1,8 @@
 import IncomingMessage from '../IncomingMessage';
-import Store from '@/store/Store';
+import App from '@/App';
 
 export default class UpdateCreditsEvent implements IncomingMessage {
     Parse(data: any): void {
-        Store.GetInstance().session.credits = data.credits;
+        App.interfaceManager.container.$store.commit('session/setCredits', data.credits);
     }
 }

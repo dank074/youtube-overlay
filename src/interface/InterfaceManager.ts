@@ -1,3 +1,4 @@
+import store from '@/store/store';
 import Vue from 'vue'
 import App from './App.vue'
 
@@ -14,8 +15,10 @@ export default class InterfaceManager {
 
     public initInterface(): void {
         this._container = new Vue({
+            store,
             render: h => h(App)
         }).$mount("#app");
+        this.container.$store.commit('slotmachine/initAudio');
     }
 
     public get container() : Vue {

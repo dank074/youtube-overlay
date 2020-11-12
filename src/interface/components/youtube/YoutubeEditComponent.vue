@@ -1,9 +1,9 @@
 <template>
-     <div class="box_body" v-show="data.youtubeVideo.editMode">
+     <div class="box_body" v-show="youtubeplayer.editMode">
         <div class="box_form">
             <input type="radio" v-model="mode" value="1">Video URL
             <input type="radio" v-model="mode" value="2">Search keyword
-            <input v-if="mode == 1" v-model="videoid" type="text" size="32" value="" :placeholder="'https://www.youtube.com/watch?v=' + data.youtubeVideo.videoId" class="box_input">
+            <input v-if="mode == 1" v-model="videoid" type="text" size="32" value="" :placeholder="'https://www.youtube.com/watch?v=' + youtubeplayer.videoId" class="box_input">
             <input v-if="mode == 2" v-model="searchKeyword" type="text" size="32" value="" class="box_input">
             <button v-if="mode == 2" type="button" class="box_button" v-on:click="Search">Search</button>
             <ul class="yt-results" v-if="mode == 2 && searchResults != null">
@@ -18,15 +18,17 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import Component from 'vue-class-component';
 import axios from 'axios';
 import EditTVComposer from '@/communication/outgoing/general/EditTVComposer';
 import Logger from '@/utils/Logger';
 import Constants from '@/utils/Constants';
 import RegexUtility from '../../../utils/RegexUtility';
 import CommunicationManager from '../../../communication/CommunicationManager';
-import Store from '../../../store/Store';
 import App from '@/App';
+import { State } from 'vuex-class';
+import Vue from 'vue';
+import { YoutubePlayerState } from '@/store/types';
 
 @Component
 export default class YoutubeEditComponent extends Vue {
@@ -34,18 +36,22 @@ export default class YoutubeEditComponent extends Vue {
     mode: number = 1;
     searchKeyword: string = "";
     searchResults: any = [];
+    @State('youtubeplayer') youtubeplayer!: YoutubePlayerState;
     
     data() {
       return { 
-          data: Store.GetInstance()
       }
+    }
+
+    created() {
+        this.youtubeplayer;
     }
 
    SendEdit(): void {
         if (this.videoid == "")
             return;
-        App.communicationManager.sendMessage(new EditTVComposer(Store.GetInstance().youtubeVideo.itemId, this.videoid));
-        Store.GetInstance().youtubeVideo.open = false;
+        App.communicationManager.sendMessage(new EditTVComposer(this.youtubeplayer.itemId, this.videoid));
+        this.$store.commit('youtubeplayer/setOpen', false);
         this.videoid = "";
         this.searchKeyword = "";
         this.searchResults = null;

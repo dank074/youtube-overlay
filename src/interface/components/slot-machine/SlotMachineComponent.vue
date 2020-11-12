@@ -1,5 +1,5 @@
 <template>
-  <div class="SlotMachine" v-show="data.slotMachine.open" v-draggable="draggableValue">
+  <div class="SlotMachine" v-show="slotmachine.open" v-draggable="draggableValue">
       <div class="box_head" :ref="handleId"><div class="box_cross" v-on:click="Close"></div> Slot Machine </div>
     <div class="SlotMachine-reels">
       <div class="SlotMachine-shadow"></div>
@@ -11,7 +11,7 @@
     <div class="SlotMachine-stats">
       <div class="SlotMachine-stat is-credit">
         <div class="SlotMachine-statTitle">Credits</div>
-        <div class="SlotMachine-statValue">{{data.session.credits}}</div>
+        <div class="SlotMachine-statValue">{{session.credits}}</div>
       </div>
       <div class="SlotMachine-stat is-win">
         <div class="SlotMachine-statTitle">Won</div>
@@ -23,7 +23,7 @@
       <input type="text" style="width:100px" v-model="bet" />
       <button
         class="SlotMachine-button is-spin"
-        :disabled="data.slotMachine.isSpinning"
+        :disabled="slotmachine.isSpinning"
         v-on:mousedown="spin()"
       >Play</button>
     </div>
@@ -31,14 +31,16 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import Store from "@/store/Store";
+import Component from "vue-class-component";
 import SlotReelComponent from "./SlotReelComponent.vue";
 import CommunicationManager from "@/communication/CommunicationManager";
 import RequestSpinSlotMachineComposer from "@/communication/outgoing/general/RequestSpinSlotMachineComposer";
 import RequestCreditsComposer from "@/communication/outgoing/general/RequestCreditsComposer";
 import { Draggable } from 'draggable-vue-directive';
 import App from '@/App';
+import { State } from 'vuex-class';
+import { SessionState, SlotMachineState } from '@/store/types';
+import Vue from 'vue';
 
 @Component({
   components: {
@@ -51,15 +53,21 @@ import App from '@/App';
 export default class SlotMachineComponent extends Vue {
   public bet: number = 1;
   public won: number = 0;
+  @State('slotmachine') slotmachine!: SlotMachineState;
+  @State('session') session!: SessionState;
 
   data() {
     return {
-      data: Store.GetInstance(),
       handleId: "drag-slots",
       draggableValue: {
         handle: undefined
       }
     };
+  }
+
+  created() {
+    this.slotmachine;
+    this.session;
   }
 
   mounted() {
@@ -89,12 +97,12 @@ export default class SlotMachineComponent extends Vue {
       return;
     }
     if (
-      Store.GetInstance().session.credits > 0 &&
-      Store.GetInstance().slotMachine.results.length == 0 &&
-      !Store.GetInstance().slotMachine.isSpinning
+      this.session.credits > 0 &&
+      this.slotmachine.results.length == 0 &&
+      !this.slotmachine.isSpinning
     ) {
       this.won = 0;
-      let itemId = Store.GetInstance().slotMachine.itemId;
+      let itemId = this.slotmachine.itemId;
       App.communicationManager.sendMessage(
         new RequestSpinSlotMachineComposer(itemId, this.bet)
       );
@@ -102,29 +110,29 @@ export default class SlotMachineComponent extends Vue {
   }
 
   checkWin(): void {
-    if (Store.GetInstance().slotMachine.results.length === 3) {
-      if (Store.GetInstance().slotMachine.won) {
-        let payout = Store.GetInstance().slotMachine.payout;
+    if (this.slotmachine.results.length === 3) {
+      if (this.slotmachine.won) {
+        let payout = this.slotmachine.payout;
         if ( payout > 100) {
-          let audio = Store.GetInstance().slotMachine.audio.get("bigwin");
+          let audio = this.slotmachine.audio.get("bigwin");
           if (audio) audio.play();
         } else {
-          let audio = Store.GetInstance().slotMachine.audio.get("win");
+          let audio = this.slotmachine.audio.get("win");
           if (audio) audio.play();
         }
         App.communicationManager.sendMessage(new RequestCreditsComposer());
-        this.won = Store.GetInstance().slotMachine.payout;
+        this.won = this.slotmachine.payout;
       } else {
         console.log("lost");
       }
     }
-    Store.GetInstance().slotMachine.results = [];
-    Store.GetInstance().slotMachine.isSpinning = false;
-    Store.GetInstance().slotMachine.won = false;
+    this.$store.commit('slotmachine/setResults', []);
+    this.$store.commit('slotmachine/setSpinning', false);
+    this.$store.commit('slotmachine/setWon', false);
   }
 
   Close() {
-      Store.GetInstance().slotMachine.open = false;
+    this.$store.commit('slotmachine/setOpen', false);
   }
 }
 </script>

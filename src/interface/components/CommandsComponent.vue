@@ -1,5 +1,5 @@
 <template>
-  <div v-if="data.commands_open" class="box" style="width: 340px;left: 200px;top: 200px;z-index: 1000;" v-draggable="draggableValue">
+  <div v-if="commands.open" class="box" style="width: 340px;left: 200px;top: 200px;z-index: 1000;" v-draggable="draggableValue">
     <div class="box_head" :ref="handleId">
       <div class="box_cross" v-on:click="Close"></div>Commands
     </div>
@@ -8,7 +8,7 @@
       <div class="commands-box">
         <table>
           <tr v-for="(command,index) in filteredList()" :key="index">
-            <td>{{command}}</td>
+            <td>{{ command }}</td>
           </tr>
         </table>
       </div>
@@ -17,9 +17,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import Component from "vue-class-component";
 import { Draggable } from "draggable-vue-directive";
-import Store from "@/store/Store";
+import { State } from 'vuex-class';
+import { CommandsState } from '@/store/types';
+import Vue from 'vue';
 
 @Component({
   directives: {
@@ -27,11 +29,12 @@ import Store from "@/store/Store";
   }
 })
 export default class CommandsComponent extends Vue {
+  @State(state => state.commands) commands!: CommandsState;
+
   search: string = "";
 
   data() {
     return {
-      data: Store.GetInstance(),
       handleId: "drag-commands",
       draggableValue: {
         handle: undefined
@@ -39,18 +42,22 @@ export default class CommandsComponent extends Vue {
     };
   }
 
+  created() {
+    this.commands;
+  }
+
   mounted() {
     this.$data.draggableValue.handle = this.$refs[this.$data.handleId];
   }
 
   filteredList(): string[] {
-    return Store.GetInstance().commands.filter(command => {
+    return (this.commands.values).filter( command => {
       return command.toLowerCase().includes(this.search.toLowerCase());
     });
   }
 
   Close(): void {
-    Store.GetInstance().commands_open = false;
+    this.$store.commit('commands/setOpen', false);
   }
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="Reel" v-bind:class="{'is-locked':data.slotMachine.isSpining}">
+  <div class="Reel" v-bind:class="{'is-locked':slotmachine.isSpining}">
     <div class="Reel-inner">
       <img class="Reel-image" v-for="n in fruits.length" :key="n" :src="fruits[n-1].image" />      
     </div>
@@ -7,36 +7,50 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import Store from "@/store/Store";
+import Component from "vue-class-component";
+import { State } from 'vuex-class';
+import Vue, { PropType } from 'vue';
+import { SlotMachineState } from '@/store/types';
+
+const SlotReelProps = Vue.extend({
+  props: {
+    reel: { 
+      type: Number,
+      required: true
+    }
+  }
+})
 
 @Component({})
-export default class SlotReelComponent extends Vue {
-  public momentum: number = 0;
-  public fruits = Store.GetInstance().slotMachine.items.slice(0);
-  @Prop() reel!: number;
+export default class SlotReelComponent extends SlotReelProps {
+  momentum: number = 0;
+  fruits = this.$store.state.slotmachine.items.slice(0);
+  @State('slotmachine') slotmachine!: SlotMachineState;
 
   data() {
     return {
-      data: Store.GetInstance()
     };
   }
 
-mounted () {
+  created() {
+    this.slotmachine;
+  }
+
+  mounted () {
     this.$el.addEventListener("transitionend", this.animateEnd);
   }
 
   run(): void {
-      this.fruits = Store.GetInstance().slotMachine.items.slice(0); // reset the items
+      this.fruits = this.slotmachine.items.slice(0); // reset the items
       let temp = this.fruits[2];
-      this.fruits[2] = Store.GetInstance().slotMachine.items[Store.GetInstance().slotMachine.results[this.reel - 1]];
-      this.fruits[Store.GetInstance().slotMachine.results[this.reel - 1]] = temp;
+      this.fruits[2] = this.slotmachine.items[this.slotmachine.results[this.reel - 1]];
+      this.fruits[this.slotmachine.results[this.reel - 1]] = temp;
       this.$forceUpdate();
       var min = 8;
       var max = 28;
       var momentum = Math.floor(Math.random() * (max - min + 1) + min);
       this.momentum = momentum;
-      let audio = Store.GetInstance().slotMachine.audio.get("spin");
+      let audio = this.slotmachine.audio.get("spin");
       if (audio) audio.play();
       this.animate();
   }
@@ -52,11 +66,11 @@ mounted () {
       setTimeout(this.animate, 10);
     } else {
       this.$emit('stopped', this.reel);
-      let audio = Store.GetInstance().slotMachine.audio.get("spinEnd");
+      let audio = this.slotmachine.audio.get("spinEnd");
       if (audio) {
         audio.play();
       }
-      let spinAudio = Store.GetInstance().slotMachine.audio.get("spin");
+      let spinAudio = this.slotmachine.audio.get("spin");
       if (spinAudio) {
         spinAudio.pause();
         spinAudio.currentTime = 0.3;

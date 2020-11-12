@@ -1,13 +1,11 @@
 import IncomingMessage from '../IncomingMessage';
-import Store from '@/store/Store';
+import App from '@/App';
 
 export default class YoutubeTVEvent implements IncomingMessage{
     Parse(data: any): void {
-        let VideoId = data.videoId;
-
-        Store.GetInstance().youtubeVideo.open = true;
-        Store.GetInstance().youtubeVideo.videoId = VideoId;
-        Store.GetInstance().youtubeVideo.itemId = data.itemId;
-        Store.GetInstance().youtubeVideo.editMode = (VideoId == "");
+        App.interfaceManager.container.$store.commit('youtubeplayer/setOpen', true);
+        App.interfaceManager.container.$store.commit('youtubeplayer/setVideoId', data.videoId);
+        App.interfaceManager.container.$store.commit('youtubeplayer/setItemId', data.itemId);
+        App.interfaceManager.container.$store.commit('youtubeplayer/setEditMode', data.videoId == "");
     }
 }

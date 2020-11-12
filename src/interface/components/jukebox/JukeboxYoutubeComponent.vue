@@ -5,12 +5,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import Store from '@/store/Store';
+import Component from 'vue-class-component';
 import YouTubePlayer from 'youtube-player';
 import CommunicationManager from '../../../communication/CommunicationManager';
 import SongEndedComposer from '../../../communication/outgoing/jukebox/SongEndedComposer';
 import App from '@/App';
+import { State } from 'vuex-class';
+import Vue from 'vue';
+import { JukeboxState } from '@/store/types';
 
 @Component
 export default class JukeboxYoutubeComponent extends Vue {
@@ -24,11 +26,16 @@ export default class JukeboxYoutubeComponent extends Vue {
         3: 'buffering',
         5: 'video cued'
     };
+    @State('jukebox') jukebox!: JukeboxState;
 
     data() {
       return { 
-          data: Store.GetInstance()
+          
       }
+    }
+
+    created() {
+        this.jukebox;
     }
 
     mounted() {
@@ -65,56 +72,56 @@ export default class JukeboxYoutubeComponent extends Vue {
     }
 
     playSong(index: number) {
-        if(index < Store.GetInstance().jukebox.playlist.length) {
-            Store.GetInstance().jukebox.currentIndex = index;
-            this.player.loadVideoById(Store.GetInstance().jukebox.playlist[index].videoId);
+        if(index < this.jukebox.playlist.length) {
+            this.$store.commit('jukebox/setCurrentIndex', index);
+            this.player.loadVideoById(this.jukebox.playlist[index].videoId);
             this.player.playVideo();
-            Store.GetInstance().jukebox.playing = true;
+            this.$store.commit('jukebox/setPlaying', true);
         }
     }
 
     onPlayStop(playing: boolean) {
         if(!playing) {
             this.player.stopVideo();
-            Store.GetInstance().jukebox.playing = false;
+            this.$store.commit('jukebox/setPlaying', false);
         } else {
-            this.playSong(Store.GetInstance().jukebox.currentIndex);
-            Store.GetInstance().jukebox.playing = true;
+            this.playSong(this.jukebox.currentIndex);
+            this.$store.commit('jukebox/setPlaying', true);
         }
     }
 
     onPlayPrev() {
-        if(Store.GetInstance().jukebox.currentIndex > 0) {
-            Store.GetInstance().jukebox.currentIndex--;
+        if(this.jukebox.currentIndex > 0) {
+            this.$store.commit('jukebox/decrementIndex');
         } 
-        this.playSong(Store.GetInstance().jukebox.currentIndex);
+        this.playSong(this.jukebox.currentIndex);
     }
 
     onPlayNext() {
-        if(Store.GetInstance().jukebox.currentIndex < Store.GetInstance().jukebox.playlist.length - 1) {
-            Store.GetInstance().jukebox.currentIndex++;
+        if(this.jukebox.currentIndex < this.jukebox.playlist.length - 1) {
+            this.$store.commit('jukebox/incrementIndex');
         }
         else {
-            Store.GetInstance().jukebox.currentIndex = 0;
+            this.$store.commit('jukebox/setCurrentIndex', 0);
         }
-        this.playSong(Store.GetInstance().jukebox.currentIndex);
+        this.playSong(this.jukebox.currentIndex);
     }
 
     onRemoveSong(index: number) {
-        Store.GetInstance().jukebox.playlist.splice(index, 1);        
-        if(Store.GetInstance().jukebox.playlist.length == 0) {
+        this.$store.commit('jukebox/removeFromPlaylist', index);        
+        if(this.jukebox.playlist.length == 0) {
             this.player.stopVideo();
         }
-        if(index == Store.GetInstance().jukebox.currentIndex) {
-            if(index > Store.GetInstance().jukebox.playlist.length - 1 && Store.GetInstance().jukebox.playlist.length > 0) {
-                Store.GetInstance().jukebox.currentIndex = Store.GetInstance().jukebox.playlist.length - 1;
+        if(index == this.jukebox.currentIndex) {
+            if(index > this.jukebox.playlist.length - 1 && this.jukebox.playlist.length > 0) {
+                this.$store.commit('jukebox/setCUrrentIndex', this.jukebox.playlist.length - 1);
             }
-            if(Store.GetInstance().jukebox.playlist.length > 0) {
-                this.playSong(Store.GetInstance().jukebox.currentIndex);
+            if(this.jukebox.playlist.length > 0) {
+                this.playSong(this.jukebox.currentIndex);
             }
         }
-        else if(index < Store.GetInstance().jukebox.currentIndex && Store.GetInstance().jukebox.currentIndex > 0) {
-            Store.GetInstance().jukebox.currentIndex--;
+        else if(index < this.jukebox.currentIndex && this.jukebox.currentIndex > 0) {
+            this.$store.commit('jukebox/decrementIndex');
         }
     }
 

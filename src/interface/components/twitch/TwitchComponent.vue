@@ -1,5 +1,5 @@
 <template>
-    <div v-show="data.twitch.open" class="box" v-bind:style="CenterBox" v-draggable="draggableValue">
+    <div v-show="twitchplayer.open" class="box" v-bind:style="CenterBox" v-draggable="draggableValue">
         <div class="box_head" :ref="handleId">
             <div class="box_cross" v-on:click="Close"></div>
                     Twitch Video
@@ -9,10 +9,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import Component from 'vue-class-component';
 import { Draggable } from 'draggable-vue-directive';
-import Store from '@/store/Store';
 import TwitchVideoComponent from './TwitchVideoComponent.vue';
+import { State } from 'vuex-class';
+import Vue from 'vue';
+import { TwitchPlayerState } from '@/store/types';
 
 @Component({
     components: {
@@ -23,9 +25,10 @@ import TwitchVideoComponent from './TwitchVideoComponent.vue';
   }
 })
 export default class TwitchComponent extends Vue {
+  @State('twitchplayer') twitchplayer!: TwitchPlayerState;
+  
     data() {
       return { 
-          data: Store.GetInstance(),
           handleId: "drag-twitch",
           draggableValue: {
             handle: undefined
@@ -33,12 +36,16 @@ export default class TwitchComponent extends Vue {
       }
     }
 
+    created() {
+      this.twitchplayer;
+    }
+
     mounted() {
       this.$data.draggableValue.handle = this.$refs[this.$data.handleId];
     }
 
     Close (): void {
-        Store.GetInstance().twitch.open = false;
+      this.$store.commit('twitchplayer/setOpen', false);
     }
 
     CenterBox() {

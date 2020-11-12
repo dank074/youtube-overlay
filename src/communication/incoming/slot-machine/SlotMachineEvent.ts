@@ -1,10 +1,10 @@
 import IncomingMessage from '../IncomingMessage';
-import Store from '@/store/Store';
+import App from '@/App';
 
 export default class SlotMachineEvent implements IncomingMessage {
     Parse(data: any): void {
-        Store.GetInstance().slotMachine.itemId = data.itemId;
-        Store.GetInstance().session.credits = data.credits;
-        Store.GetInstance().slotMachine.open = true;
+        App.interfaceManager.container.$store.commit('slotmachine/setItemId', data.itemId);
+        App.interfaceManager.container.$store.commit('session/setCredits', data.credits);
+        App.interfaceManager.container.$store.commit('slotmachine/setOpen', true);
     }
 }

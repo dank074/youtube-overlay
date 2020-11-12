@@ -1,7 +1,7 @@
 <template>
-    <div v-show="data.youtubeVideo.open" class="box" v-bind:style="CenterBox" v-draggable="draggableValue">
+    <div v-show="youtubeplayer.open" class="box" v-bind:style="CenterBox" v-draggable="draggableValue">
         <div class="box_head" :ref="handleId">
-            <div class="box_edit" v-if="data.youtubeVideo.itemId != 0" v-on:click="Edit"></div>
+            <div class="box_edit" v-if="youtubeplayer.itemId != 0" v-on:click="Edit"></div>
             <div class="box_cross" v-on:click="Close"></div>
                     Youtube Video
         </div>  
@@ -11,11 +11,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import Component from 'vue-class-component';
 import { Draggable } from 'draggable-vue-directive';
-import Store from '@/store/Store';
 import YoutubeVideoComponent from './YoutubeVideoComponent.vue';
 import YoutubeEditComponent from './YoutubeEditComponent.vue';
+import { State } from 'vuex-class';
+import Vue from 'vue';
+import { YoutubePlayerState } from '@/store/types';
 
 @Component({
     components: {
@@ -27,9 +29,10 @@ import YoutubeEditComponent from './YoutubeEditComponent.vue';
   }
 })
 export default class YoutubeComponent extends Vue {
+    @State('youtubeplayer') youtubeplayer!: YoutubePlayerState;
+    
     data() {
       return { 
-          data: Store.GetInstance(),
           handleId: "drag-yt",
           draggableValue: {
             handle: undefined
@@ -37,16 +40,20 @@ export default class YoutubeComponent extends Vue {
       }
     }
 
+    created() {
+        this.youtubeplayer;
+    }
+
     mounted() {
       this.$data.draggableValue.handle = this.$refs[this.$data.handleId];
     }
 
     Close (): void {
-        Store.GetInstance().youtubeVideo.open = false;
+        this.$store.commit('youtubeplayer/setOpen', false);
     }
 
     Edit(): void {
-        Store.GetInstance().youtubeVideo.editMode = true;
+        this.$store.commit('youtubeplayer/setEditMode', true);
     }
 
     CenterBox() {

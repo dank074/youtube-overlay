@@ -1,8 +1,8 @@
 import IncomingMessage from '../IncomingMessage';
-import Store from '@/store/Store';
+import App from '@/App';
 
 export default class PlaylistEvent implements IncomingMessage {
     Parse(data: any): void {
-        Store.GetInstance().jukebox.playlist = data.playlist;
+        App.interfaceManager.container.$store.commit('jukebox/setPlaylist', data.playlist);
     }
 }

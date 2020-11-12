@@ -1,9 +1,8 @@
+import App from '@/App';
 import IncomingMessage from './incoming/IncomingMessage';
 import YoutubeTVEvent from './incoming/youtube/YoutubeTVEvent';
 import OutgoingMessage from './outgoing/OutgoingMessage';
-import Store from '@/store/Store';
 import Logger from '@/utils/Logger';
-import MentionEvent from './incoming/general/MentionEvent';
 import SlotMachineEvent from './incoming/slot-machine/SlotMachineEvent';
 import SpinResultEvent from './incoming/slot-machine/SpinResultEvent';
 import SessionDataEvent from './incoming/general/SessionDataEvent';
@@ -28,7 +27,6 @@ export default class CommunicationManager {
 
     private registerMessages(): void {
         this._events.set("youtube_tv", new YoutubeTVEvent());
-        this._events.set("mention", new MentionEvent());
         this._events.set("slot_machine", new SlotMachineEvent());
         this._events.set("slot_result", new SpinResultEvent());
         this._events.set("session_data", new SessionDataEvent());
@@ -45,7 +43,7 @@ export default class CommunicationManager {
     }
 
     public sendMessage(message: OutgoingMessage): void {
-        if (!Store.GetInstance().connected || !message)
+        if (!App.interfaceManager.container.$store.state.connected || !message)
             return;
         let swfObject: any = document.querySelector('object, embed') as any;
         if(swfObject)

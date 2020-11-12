@@ -1,13 +1,13 @@
 import OutgoingMessage from '../OutgoingMessage';
-import Store from '@/store/Store';
+import Store from '@/store/store';
 
 export default class NextSongComposer implements OutgoingMessage {
     header: string = "next_song";
     data: any;
 
-    constructor() {
+    constructor(currentIndex: number) {
         this.data = {
-            "currentIndex": Store.GetInstance().jukebox.currentIndex
+            "currentIndex": currentIndex
         };
     }
 }
