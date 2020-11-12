@@ -3,7 +3,7 @@ import Store from '@/store/store';
 import App from '@/App';
 
 export default class TwitchVideoEvent implements IncomingMessage{
-    Parse(data: any): void {
+    parse(data: any): void {
         let channel = data.videoId;
 
         if(channel == "")

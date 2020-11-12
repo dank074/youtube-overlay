@@ -54,7 +54,7 @@ export default class CommunicationManager {
         let json = JSON.parse(message.replace(/&#47;/g, "/"));
         let parser = this._events.get(json.header);
         if(parser) {
-            parser.Parse(json.data);
+            parser.parse(json.data);
         } else {
             Logger.Log(json);
         }
