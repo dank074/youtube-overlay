@@ -1,8 +1,8 @@
 <template>
-    <div v-show="youtubeplayer.open" class="box" v-bind:style="CenterBox" v-draggable="draggableValue">
+    <div v-show="youtubeplayer.open" class="box" :style="centerBox" v-draggable="draggableValue">
         <div class="box_head" :ref="handleId">
-            <div class="box_edit" v-if="youtubeplayer.itemId != 0" v-on:click="Edit"></div>
-            <div class="box_cross" v-on:click="Close"></div>
+            <div class="box_edit" v-if="youtubeplayer.itemId != 0" v-on:click="edit"></div>
+            <div class="box_cross" v-on:click="close"></div>
                     Youtube Video
         </div>  
         <YoutubeVideoComponent/>
@@ -48,20 +48,20 @@ export default class YoutubeComponent extends Vue {
       this.$data.draggableValue.handle = this.$refs[this.$data.handleId];
     }
 
-    Close (): void {
+    close(): void {
         this.$store.commit('youtubeplayer/setOpen', false);
     }
 
-    Edit(): void {
+    edit(): void {
         this.$store.commit('youtubeplayer/setEditMode', true);
     }
 
-    CenterBox() {
-            let Width: number = 560;
-            let cWi: number = ((window.innerWidth || (document != null && document.documentElement != null && document.documentElement.clientWidth) || document.body.clientWidth) / 2) - (Width / 2);
-            let cHe: number = Math.floor((((window.innerHeight || (document != null && document.documentElement != null && document.documentElement.clientHeight) || document.body.clientHeight) / 2) / 100) * 60);
-      
-            return { left: cWi + "px", top: cHe + "px" };
+    centerBox(): any {
+        let Width: number = 560;
+        let cWi: number = ((window.innerWidth || (document != null && document.documentElement != null && document.documentElement.clientWidth) || document.body.clientWidth) / 2) - (Width / 2);
+        let cHe: number = Math.floor((((window.innerHeight || (document != null && document.documentElement != null && document.documentElement.clientHeight) || document.body.clientHeight) / 2) / 100) * 60);
+
+        return { left: cWi + "px", top: cHe + "px" };
     }
 }
 </script>

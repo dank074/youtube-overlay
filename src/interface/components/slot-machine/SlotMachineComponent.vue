@@ -1,6 +1,6 @@
 <template>
   <div class="SlotMachine" v-show="slotmachine.open" v-draggable="draggableValue">
-      <div class="box_head" :ref="handleId"><div class="box_cross" v-on:click="Close"></div> Slot Machine </div>
+      <div class="box_head" :ref="handleId"><div class="box_cross" v-on:click="close"></div> Slot Machine </div>
     <div class="SlotMachine-reels">
       <div class="SlotMachine-shadow"></div>
       <div class="SlotMachine-payline"></div>
@@ -131,7 +131,7 @@ export default class SlotMachineComponent extends Vue {
     this.$store.commit('slotmachine/setWon', false);
   }
 
-  Close() {
+  close(): void {
     this.$store.commit('slotmachine/setOpen', false);
   }
 }

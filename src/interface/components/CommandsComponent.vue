@@ -1,7 +1,7 @@
 <template>
   <div v-if="commands.open" class="box" style="width: 340px;left: 200px;top: 200px;z-index: 1000;" v-draggable="draggableValue">
     <div class="box_head" :ref="handleId">
-      <div class="box_cross" v-on:click="Close"></div>Commands
+      <div class="box_cross" v-on:click="close"></div>Commands
     </div>
     <div class="box_body">
       <input type="text" v-model="search" placeholder="Search.." style="margin:5px; width: 300px"/>
@@ -56,7 +56,7 @@ export default class CommandsComponent extends Vue {
     });
   }
 
-  Close(): void {
+  close(): void {
     this.$store.commit('commands/setOpen', false);
   }
 }

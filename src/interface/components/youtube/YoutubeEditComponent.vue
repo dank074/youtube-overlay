@@ -5,14 +5,14 @@
             <input type="radio" v-model="mode" value="2">Search keyword
             <input v-if="mode == 1" v-model="videoid" type="text" size="32" value="" :placeholder="'https://www.youtube.com/watch?v=' + youtubeplayer.videoId" class="box_input">
             <input v-if="mode == 2" v-model="searchKeyword" type="text" size="32" value="" class="box_input">
-            <button v-if="mode == 2" type="button" class="box_button" v-on:click="Search">Search</button>
-            <ul class="yt-results" v-if="mode == 2 && searchResults != null">
-                <li class="results-container" v-for="n in Math.min(10, searchResults.length)" :key="n" @click="ClickOnItem(n-1)">
+            <button v-if="mode == 2" type="button" class="box_button" v-on:click="search">Search</button>
+            <ul class="yt-results" v-if="mode == 2 && searchResults">
+                <li class="results-container" v-for="n in Math.min(10, searchResults.length)" :key="n" @click="clickOnItem(n-1)">
                     <img :src="searchResults[n-1].snippet.thumbnails.default.url" class="results-stat">
                     <span class="results-stat">{{ searchResults[n-1].snippet.title }}</span>
                 </li>
             </ul>
-			<button v-if="mode == 1" type="button" class="box_button" v-on:click="SubmitUrl">Edit</button>
+			<button v-if="mode == 1" type="button" class="box_button" v-on:click="submitUrl">Edit</button>
         </div>
     </div>
 </template>
@@ -47,7 +47,7 @@ export default class YoutubeEditComponent extends Vue {
         this.youtubeplayer;
     }
 
-   SendEdit(): void {
+   sendEdit(): void {
         if (this.videoid == "")
             return;
         App.communicationManager.sendMessage(new EditTVComposer(this.youtubeplayer.itemId, this.videoid));
@@ -57,24 +57,24 @@ export default class YoutubeEditComponent extends Vue {
         this.searchResults = null;
     }
 
-    ClickOnItem(index: number): void {
+    clickOnItem(index: number): void {
         if(this.searchResults[index].id.videoId != undefined)
             this.videoid = this.searchResults[index].id.videoId;
-        this.SendEdit();
+        this.sendEdit();
     }
 
-    SubmitUrl(): void {
+    submitUrl(): void {
         let id = RegexUtility.getVideoIdFromYoutubeURL(this.videoid);
         if(id != "") {
             this.videoid = id;
-            this.SendEdit();
+            this.sendEdit();
         }
         else {
             alert("Invalid youtube url")
         }
     }
 
-    Search(): void {
+    search(): void {
         if(this.searchKeyword == "")
             return;
         axios.get(Constants.getYoutubeApiUrl() + this.searchKeyword).then((response:any) => {

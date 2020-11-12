@@ -1,18 +1,18 @@
 <template>
   <div v-show="jukebox.open" class="box" style="width: 500px;left: 200px;top: 200px;z-index: 1000;height:400px;" v-draggable="draggableValue">
     <div class="box_head" :ref="handleId">
-      <div class="box_cross" v-on:click="Close"></div>Jukebox
+      <div class="box_cross" v-on:click="close"></div>Jukebox
     </div>
     <div class="box_body">
       <ul class="playlist-list">
         <h1 style="display: inline-block;">Playlist</h1>
-        <img src="~@/assets/prev.png" v-on:click="PlayPrev()" class="controls">
-        <img v-if="!jukebox.playing" src="~@/assets/play.png" v-on:click="PlayStop()" class="controls">
-        <img v-if="jukebox.playing" src="~@/assets/pause.png" v-on:click="PlayStop()" class="controls">
-        <img src="~@/assets/skip.png" v-on:click="PlayNext()" class="controls">
+        <img src="~@/assets/prev.png" v-on:click="playPrev()" class="controls">
+        <img v-if="!jukebox.playing" src="~@/assets/play.png" v-on:click="playStop()" class="controls">
+        <img v-if="jukebox.playing" src="~@/assets/pause.png" v-on:click="playStop()" class="controls">
+        <img src="~@/assets/skip.png" v-on:click="playNext()" class="controls">
         <li v-for="(song,index) in jukebox.playlist" :key="index" v-bind:class="{ active: index == jukebox.currentIndex }">
           {{ song.name }}
-          <span class="artist">{{song.channel}} <img src="~@/assets/minus.png" v-on:click="RemoveSong(index)" class="controls"></span>
+          <span class="artist">{{song.channel}} <img src="~@/assets/minus.png" v-on:click="removeSong(index)" class="controls"></span>
         </li>
       </ul>
       <ul class="yt-results" v-if="searchResults != null">
@@ -21,13 +21,13 @@
         <input type="radio" v-model="mode" value="2">Search keyword
         <input v-if="mode == 1" v-model="videoid" type="text" size="32" value="" placeholder="https://www.youtube.com/watch?v=KJFKSDJF" class="box_input">
         <input v-if="mode == 1" v-model="name" type="text" size="32" value="" placeholder="Song name" class="box_input">
-        <button v-if="mode == 1" type="button" class="box_button" v-on:click="SubmitUrl">Add</button>
+        <button v-if="mode == 1" type="button" class="box_button" v-on:click="submitUrl">Add</button>
         <input v-if="mode == 2" v-model="searchKeyword" type="text" size="32" class="box_input"/>
-        <button v-if="mode == 2" type="button" class="box_button" v-on:click="Search">Search</button>
+        <button v-if="mode == 2" type="button" class="box_button" v-on:click="search">Search</button>
         <li class="results-container" v-for="n in searchResults.length" :key="n">
           <img :src="searchResults[n-1].snippet.thumbnails.default.url" />
           <span class="results-stat">{{ searchResults[n-1].snippet.title }}</span>
-          <button type="button" class="ant-btn ant-btn-primary" v-on:click="AddSong(n-1)">Add</button>
+          <button type="button" class="ant-btn ant-btn-primary" v-on:click="addSong(n-1)">Add</button>
         </li>
       </ul>
     </div>
@@ -84,7 +84,7 @@ export default class JukeboxComponent extends Vue {
     this.$data.draggableValue.handle = this.$refs[this.$data.handleId];
   }
 
-  Search(): void {
+  search(): void {
     if (this.searchKeyword == "") return;
     axios
       .get(Constants.getYoutubeApiUrl() + this.searchKeyword)
@@ -98,7 +98,7 @@ export default class JukeboxComponent extends Vue {
       });
   }
 
-  SubmitUrl(): void {
+  submitUrl(): void {
     if(this.videoid == "" || this.name == "") {
       alert("Fill out all form fields"); return;
     }
@@ -116,23 +116,23 @@ export default class JukeboxComponent extends Vue {
     }
   }
 
-  PlayStop() {
+  playStop() {
     App.communicationManager.sendMessage(new PlayStopComposer(!this.jukebox.playing));
   }
 
-  PlayNext() {
+  playNext() {
     App.communicationManager.sendMessage(new NextSongComposer(this.jukebox.currentIndex));
   }
 
-  PlayPrev() {
+  playPrev() {
     App.communicationManager.sendMessage(new PreviousSongComposer(this.jukebox.currentIndex))
   }
 
-  RemoveSong(index: number) {
+  removeSong(index: number) {
     App.communicationManager.sendMessage(new RemoveSongComposer(index));
   }
 
-  AddSong(index: number): void {
+  addSong(index: number): void {
     if (this.searchResults[index].id.videoId != undefined) {
      App.communicationManager.sendMessage(new AddSongComposer(new Song(
           this.searchResults[index].snippet.title,
@@ -142,7 +142,7 @@ export default class JukeboxComponent extends Vue {
     }
   }
 
-  Close(): void {
+  close(): void {
     this.$store.commit('jukebox/setOpen', false);
   }
 }
