@@ -145,34 +145,6 @@ export default class SlotMachineComponent extends Vue {
   left: 40%;
   z-index: 1000;
 }
-.box_head {
-    display: block;
-    background-color: #367897;
-    border: solid 2px #408caf;
-    border-bottom: solid 1px #000000;
-    border-top-left-radius: 7px;
-    border-top-right-radius: 7px;
-    font-size: 1.2em;
-    line-height: 30px;
-    text-align: center;
-    color: #FFFFFF;
-    font-weight: bold;
-}
-.box_cross {
-        background-image: url('~@/assets/close.png');
-        position: absolute;
-        top: 7px;
-        right: 7px;
-        width: 19px;
-        height: 20px;
-        cursor: pointer;
-        &:hover {
-            background-image: url('~@/assets/close_hover.png');
-        }
-        &:active {
-            background-image: url('~@/assets/close_active.png');
-        }
-}
 .SlotMachine-reels {
   display: -webkit-box;
   display: -ms-flexbox;

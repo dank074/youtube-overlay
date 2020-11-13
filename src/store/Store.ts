@@ -25,7 +25,7 @@ const store: StoreOptions<RootState>  = {
     },
 
     mutations: {
-        setConnected(state: any, val: boolean)  {
+        setConnected(state: RootState, val: boolean)  {
             state.connected = val;
         }
     }

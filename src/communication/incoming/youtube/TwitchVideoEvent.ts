@@ -1,5 +1,4 @@
 import IncomingMessage from '../IncomingMessage';
-import Store from '@/store/store';
 import App from '@/App';
 
 export default class TwitchVideoEvent implements IncomingMessage{

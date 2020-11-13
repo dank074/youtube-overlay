@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <YoutubeComponent/>
-    <SlotMachineComponent/>
-    <CommandsComponent/>
-    <JukeboxComponent/>
-    <JukeboxYoutubeComponent/>
-    <TwitchComponent/>
+    <YoutubeComponent />
+    <SlotMachineComponent />
+    <CommandsComponent />
+    <JukeboxComponent />
+    <JukeboxYoutubeComponent />
+    <TwitchComponent />
   </div>
 </template>
 
@@ -15,9 +15,9 @@ import YoutubeComponent from "./components/youtube/YoutubeComponent.vue";
 import SlotMachineComponent from "./components/slot-machine/SlotMachineComponent.vue";
 import CommandsComponent from "./components/CommandsComponent.vue";
 import JukeboxComponent from "./components/jukebox/JukeboxComponent.vue";
-import JukeboxYoutubeComponent from './components/jukebox/JukeboxYoutubeComponent.vue';
-import TwitchComponent from './components/twitch/TwitchComponent.vue';
-import Vue from 'vue';
+import JukeboxYoutubeComponent from "./components/jukebox/JukeboxYoutubeComponent.vue";
+import TwitchComponent from "./components/twitch/TwitchComponent.vue";
+import Vue from "vue";
 
 @Component({
   components: {
@@ -26,23 +26,12 @@ import Vue from 'vue';
     CommandsComponent,
     JukeboxComponent,
     JukeboxYoutubeComponent,
-    TwitchComponent
-  }
+    TwitchComponent,
+  },
 })
-export default class App extends Vue {
-
-}
+export default class App extends Vue {}
 </script>
 
 <style lang="scss">
-body {
-  overflow: hidden;
-  font-family: Ubuntu, sans-serif, "Trebuchet MS", "Lucida Grande",
-    "Lucida Sans Unicode", "Lucida Sans", Tahoma;
-  background-color: #0e151c;
-  font-size: 12px;
-  margin: 0;
-  padding: 0;
-  user-select: none;
-}
+@import '../assets/app.scss';
 </style>
