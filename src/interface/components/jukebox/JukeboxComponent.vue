@@ -1,5 +1,5 @@
 <template>
-  <div v-show="jukebox.open" class="box" style="width: 500px;left: 200px;top: 200px;z-index: 1000;height:400px;" v-draggable="draggableValue">
+  <div class="box" style="width: 500px;left: 200px;top: 200px;z-index: 1000;height:400px;" v-draggable="draggableValue">
     <div class="box_head" :ref="handleId">
       <div class="box_cross" v-on:click="close"></div>Jukebox
     </div>
@@ -74,10 +74,6 @@ export default class JukeboxComponent extends Vue {
         handle: undefined
       }
     };
-  }
-
-  created() {
-    this.jukebox;
   }
 
   mounted() {

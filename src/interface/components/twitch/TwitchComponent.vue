@@ -1,5 +1,5 @@
 <template>
-    <div v-show="twitchplayer.open" class="box" :style="centerBox" v-draggable="draggableValue">
+    <div class="box" :style="centerBox" v-draggable="draggableValue">
         <div class="box_head" :ref="handleId">
             <div class="box_cross" v-on:click="close"></div>
                     Twitch Video
@@ -34,10 +34,6 @@ export default class TwitchComponent extends Vue {
             handle: undefined
           }
       }
-    }
-
-    created() {
-      this.twitchplayer;
     }
 
     mounted() {

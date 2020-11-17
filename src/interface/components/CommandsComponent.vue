@@ -1,5 +1,5 @@
 <template>
-  <div v-if="commands.open" class="box" style="width: 340px;left: 200px;top: 200px;z-index: 1000;" v-draggable="draggableValue">
+  <div class="box" style="width: 340px;left: 200px;top: 200px;z-index: 1000;" v-draggable="draggableValue">
     <div class="box_head" :ref="handleId">
       <div class="box_cross" v-on:click="close"></div>Commands
     </div>
@@ -40,10 +40,6 @@ export default class CommandsComponent extends Vue {
         handle: undefined
       }
     };
-  }
-
-  created() {
-    this.commands;
   }
 
   mounted() {

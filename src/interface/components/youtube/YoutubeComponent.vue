@@ -1,5 +1,5 @@
 <template>
-    <div v-show="youtubeplayer.open" class="box" :style="centerBox" v-draggable="draggableValue">
+    <div class="box" :style="centerBox" v-draggable="draggableValue">
         <div class="box_head" :ref="handleId">
             <div class="box_edit" v-if="youtubeplayer.itemId != 0" v-on:click="edit"></div>
             <div class="box_cross" v-on:click="close"></div>
@@ -38,10 +38,6 @@ export default class YoutubeComponent extends Vue {
             handle: undefined
           }
       }
-    }
-
-    created() {
-        this.youtubeplayer;
     }
 
     mounted() {

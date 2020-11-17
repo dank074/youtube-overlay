@@ -25,15 +25,6 @@ import { TwitchPlayerState } from '@/store/types';
 export default class TwitchVideoComponent extends Vue {
   @State('twitchplayer') twitchplayer!: TwitchPlayerState;
 
-  data() {
-    return {
-    };
-  }
-
-  created() {
-    this.twitchplayer;
-  }
-
   getVideoUrl(): string {
     return "https://player.twitch.tv/?channel=" + this.twitchplayer.channel + "&parent=" + window.location.hostname + "&autoplay=true&muted=false"
   }

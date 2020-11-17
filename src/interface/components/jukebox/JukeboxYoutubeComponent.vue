@@ -28,16 +28,6 @@ export default class JukeboxYoutubeComponent extends Vue {
     };
     @State('jukebox') jukebox!: JukeboxState;
 
-    data() {
-      return { 
-          
-      }
-    }
-
-    created() {
-        this.jukebox;
-    }
-
     mounted() {
         this.player = YouTubePlayer('jukebox-player');
         this.player.on('ready', ()=>  {

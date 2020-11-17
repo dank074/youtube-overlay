@@ -13,15 +13,6 @@ import { YoutubePlayerState } from '@/store/types';
 @Component
 export default class YoutubeVideoComponent extends Vue {
     @State('youtubeplayer') youtubeplayer!: YoutubePlayerState;
-    
-    data() {
-      return { 
-      }
-    }
-
-    created() {
-        this.youtubeplayer;
-    }
 
     getVideoUrl(): string {
         return "https://www.youtube.com/embed/" + this.youtubeplayer.videoId + "?autoplay=1"

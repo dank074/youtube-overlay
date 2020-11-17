@@ -37,15 +37,6 @@ export default class YoutubeEditComponent extends Vue {
     searchKeyword: string = "";
     searchResults: any = [];
     @State('youtubeplayer') youtubeplayer!: YoutubePlayerState;
-    
-    data() {
-      return { 
-      }
-    }
-
-    created() {
-        this.youtubeplayer;
-    }
 
    sendEdit(): void {
         if (this.videoid == "")

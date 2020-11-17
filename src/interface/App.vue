@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <YoutubeComponent />
-    <SlotMachineComponent />
-    <CommandsComponent />
-    <JukeboxComponent />
+    <YoutubeComponent v-if="youtubeplayer.open"/>
+    <SlotMachineComponent v-if="slotmachine.open"/>
+    <CommandsComponent v-if="commands.open"/>
+    <JukeboxComponent v-if="jukebox.open"/>
     <JukeboxYoutubeComponent />
-    <TwitchComponent />
+    <TwitchComponent v-if="twitchplayer.open"/>
   </div>
 </template>
 
@@ -18,6 +18,8 @@ import JukeboxComponent from "./components/jukebox/JukeboxComponent.vue";
 import JukeboxYoutubeComponent from "./components/jukebox/JukeboxYoutubeComponent.vue";
 import TwitchComponent from "./components/twitch/TwitchComponent.vue";
 import Vue from "vue";
+import { State } from 'vuex-class';
+import { CommandsState, JukeboxState, SlotMachineState, TwitchPlayerState, YoutubePlayerState } from '@/store/types';
 
 @Component({
   components: {
@@ -29,7 +31,13 @@ import Vue from "vue";
     TwitchComponent,
   },
 })
-export default class App extends Vue {}
+export default class App extends Vue {
+  @State('youtubeplayer') youtubeplayer!: YoutubePlayerState;
+  @State('commands') commands!: CommandsState;
+  @State('twitchplayer') twitchplayer!: TwitchPlayerState;
+  @State('slotmachine') slotmachine!: SlotMachineState;
+  @State('jukebox') jukebox!: JukeboxState;
+}
 </script>
 
 <style lang="scss">

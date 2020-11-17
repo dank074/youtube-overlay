@@ -27,15 +27,6 @@ export default class SlotReelComponent extends SlotReelProps {
   fruits = this.$store.state.slotmachine.items.slice(0);
   @State('slotmachine') slotmachine!: SlotMachineState;
 
-  data() {
-    return {
-    };
-  }
-
-  created() {
-    this.slotmachine;
-  }
-
   mounted () {
     this.$el.addEventListener("transitionend", this.animateEnd);
   }
