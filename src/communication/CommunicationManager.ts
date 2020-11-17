@@ -110,7 +110,7 @@ export default class CommunicationManager {
     }
 
     public set mode(type: CommunicationType) {
-        this.mode = type;
+        this._mode = type;
     }
 
     public set wsUrl(url: string) {
