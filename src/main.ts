@@ -66,6 +66,8 @@ let initExternalFlashInterface = function() {
     
       return txt;
     };
+  } else {
+    Logger.Log("FlashExternalIntreface is undefined. You can use WebSockets for communication but you must initiate the connection manually by calling window.connectWebSocket()")
   }
 }
 
