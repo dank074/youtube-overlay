@@ -1,3 +1,4 @@
+import { CommunicationType } from './CommunicationType';
 import App from '@/App';
 import IncomingMessage from './incoming/IncomingMessage';
 import YoutubeTVEvent from './incoming/youtube/YoutubeTVEvent';
@@ -16,9 +17,15 @@ import DisposePlaylistEvent from './incoming/jukebox/DisposePlaylistEvent';
 import AddSongEvent from './incoming/jukebox/AddSongEvent';
 import RemoveSongEvent from './incoming/jukebox/RemoveSongEvent';
 import TwitchVideoEvent from './incoming/youtube/TwitchVideoEvent';
+import PingEvent from './incoming/general/PingEvent';
+import SSOTicketComposer from './outgoing/general/SSOTicketComposer';
 
 export default class CommunicationManager {
+    private _webSocket?: WebSocket;
     private _events : Map<String, IncomingMessage>;
+    private _mode?: CommunicationType;
+    private _sso?: string;
+    private _wsUrl?: string;
 
     constructor() {
         this._events = new Map<String, IncomingMessage>();
@@ -26,6 +33,7 @@ export default class CommunicationManager {
     }
 
     private registerMessages(): void {
+        this._events.set("ping", new PingEvent());
         this._events.set("youtube_tv", new YoutubeTVEvent());
         this._events.set("slot_machine", new SlotMachineEvent());
         this._events.set("slot_result", new SpinResultEvent());
@@ -45,22 +53,71 @@ export default class CommunicationManager {
     public sendMessage(message: OutgoingMessage): void {
         if (!App.interfaceManager.container.$store.state.connected || !message)
             return;
-        let swfObject: any = document.querySelector('object, embed') as any;
-        if(swfObject)
-            swfObject.openroom(JSON.stringify(message));
+        if(this._mode === CommunicationType.WebSocket) {
+            if (!this._webSocket || this._webSocket.readyState != WebSocket.OPEN) return;
+            this._webSocket.send(JSON.stringify(message));
+        } else {
+            let swfObject: any = document.querySelector('object, embed') as any;
+            if(swfObject) swfObject.openroom(JSON.stringify(message));
+        }
     }
 
-    public onMessage(message: string): void {
-        let json = JSON.parse(message.replace(/&#47;/g, "/"));
-        let parser = this._events.get(json.header);
-        if(parser) {
-            parser.parse(json.data);
+    public onMessage(message: string | MessageEvent): void {
+        let json: any;
+        if (typeof message === 'string' || message instanceof String) {
+            json = JSON.parse(message.replace(/&#47;/g, "/"));
         } else {
-            Logger.Log(json);
+            json = JSON.parse(message.data);
         }
+        let parser = this._events.get(json.header);
+        if(parser) parser.parse(json.data);
+        else Logger.Log(json);
+    }
+
+    public onOpen(): void {
+        if(this._mode === CommunicationType.WebSocket && this._sso) {
+            this.sendMessage(new SSOTicketComposer(this._sso))
+        }
+        App.interfaceManager.container.$store.commit("setConnected", true);
+    }
+
+    private onClose(): void {
+        App.interfaceManager.container.$store.commit("setConnected", false);
+        Logger.Log("WebSocket closed");
+    }
+
+    private onError(ev: Event): void {
+        Logger.Log("WebSocket Error");
+    }
+
+    public connectWebSocket(): void {
+        if(!this._sso || !this._wsUrl) {
+            throw new Error("Cannot start websocket connection with undefined sso ticket or ws url");
+        }
+        this._webSocket = new WebSocket(this._wsUrl);
+        this._webSocket.onopen = this.onOpen;
+        this._webSocket.onclose = this.onClose;
+        this._webSocket.onmessage = this.onMessage;
+        this._webSocket.onerror = this.onError;
     }
 
     public get events(): Map<String, IncomingMessage> {
         return this._events;
+    }
+
+    public get mode(): CommunicationType {
+        return this._mode!;
+    }
+
+    public set mode(type: CommunicationType) {
+        this.mode = type;
+    }
+
+    public set wsUrl(url: string) {
+        this._wsUrl = url;
+    }
+
+    public set sso(sso: string) {
+        this._sso = sso;
     }
 }

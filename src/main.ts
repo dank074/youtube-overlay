@@ -1,4 +1,6 @@
+import Logger from '@/utils/Logger';
 import App from './App';
+import { CommunicationType } from './communication/CommunicationType';
 
 declare global {
   interface Window {
@@ -16,21 +18,36 @@ declare global {
       openHabblet: (arg1: string, arg2: string) => void;
       openWebPageAndMinimizeClient: (arg1: string) => void;
     };
-    open(): void;
+    startYTOverlay: (sso?: string, wsUrl?: string) => void;
   }
 }
 
 App.init();
 App.interfaceManager.initInterface();
 
-if(process.env.NODE_ENV == 'production') {
+window.startYTOverlay = function(sso?: string, wsUrl?: string) {
+  if(sso && wsUrl) {
+    App.communicationManager.mode = CommunicationType.WebSocket;
+    App.communicationManager.wsUrl = wsUrl;
+    App.communicationManager.sso = sso;
+  } else {
+    App.communicationManager.mode = CommunicationType.ExternalFlashInterface;
+  }
+  Logger.Log(`Started application with mode ${App.communicationManager.mode}`);
+}
+
+if(window.FlashExternalInterface) {
   window.FlashExternalInterface.openHabblet = function(arg1: string, arg2: string) {
     App.communicationManager.onMessage(arg1);
-  };
-  
+  }
+
   window.FlashExternalInterface.legacyTrack = function(arg1: string, arg2: string, arg3: string) {
-    if (arg1 == "authentication") {
-      App.interfaceManager.container.$store.commit("setConnected", true);
+    if (arg1 === "authentication") {
+      if(App.communicationManager.mode === CommunicationType.WebSocket) {
+        App.communicationManager.connectWebSocket();
+      } else {
+        App.communicationManager.onOpen();
+      }
     }
   };
   
