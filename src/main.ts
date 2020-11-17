@@ -19,6 +19,7 @@ declare global {
       openWebPageAndMinimizeClient: (arg1: string) => void;
     };
     startYTOverlay: (sso?: string, wsUrl?: string) => void;
+    connectWebSocket: () => void;
   }
 }
 
@@ -33,30 +34,39 @@ window.startYTOverlay = function(sso?: string, wsUrl?: string) {
   } else {
     App.communicationManager.mode = CommunicationType.ExternalFlashInterface;
   }
+  initExternalFlashInterface();
   Logger.Log(`Started application with mode ${App.communicationManager.mode}`);
 }
 
-if(window.FlashExternalInterface) {
-  window.FlashExternalInterface.openHabblet = function(arg1: string, arg2: string) {
-    App.communicationManager.onMessage(arg1);
-  }
-
-  window.FlashExternalInterface.legacyTrack = function(arg1: string, arg2: string, arg3: string) {
-    if (arg1 === "authentication") {
-      if(App.communicationManager.mode === CommunicationType.WebSocket) {
-        App.communicationManager.connectWebSocket();
-      } else {
-        App.communicationManager.onOpen();
-      }
-    }
-  };
-  
-  window.FlashExternalInterface.listPlugins = function() {
-    let txt: string = "";
-    for (var i = 0; i < navigator.plugins.length; i++) {
-      txt += navigator.plugins[i].name + "|";
-    }
-  
-    return txt;
-  };
+window.connectWebSocket = function() {
+  App.communicationManager.connectWebSocket();
 }
+
+let initExternalFlashInterface = function() {
+  if(window.FlashExternalInterface) {
+    window.FlashExternalInterface.openHabblet = function(arg1: string, arg2: string) {
+      App.communicationManager.onMessage(arg1);
+    };
+  
+    window.FlashExternalInterface.legacyTrack = function(arg1: string, arg2: string, arg3: string) {
+      if (arg1 === "authentication") {
+        if(App.communicationManager.mode === CommunicationType.WebSocket) {
+          App.communicationManager.connectWebSocket();
+        } else {
+          App.communicationManager.onOpen();
+        }
+      }
+    };
+    
+    window.FlashExternalInterface.listPlugins = function() {
+      let txt: string = "";
+      for (var i = 0; i < navigator.plugins.length; i++) {
+        txt += navigator.plugins[i].name + "|";
+      }
+    
+      return txt;
+    };
+  }
+}
+
+initExternalFlashInterface();
