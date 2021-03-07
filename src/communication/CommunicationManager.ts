@@ -56,6 +56,10 @@ export default class CommunicationManager {
         if(this._mode === CommunicationType.WebSocket) {
             if (!this._webSocket || this._webSocket.readyState != WebSocket.OPEN) return;
             this._webSocket.send(JSON.stringify(message));
+        } else if(this._mode === CommunicationType.IFrameExternalFlashInterface) {
+            let frame: any = document.getElementById('nitro');
+            if(frame.contentWindow) frame.contentWindow.openroom(JSON.stringify(message));
+            else (window as any).openroom(JSON.stringify(message));
         } else {
             let swfObject: any = document.querySelector('object, embed') as any;
             if(swfObject) swfObject.openroom(JSON.stringify(message));
@@ -79,6 +83,7 @@ export default class CommunicationManager {
             this.sendMessage(new SSOTicketComposer(this._sso))
         }
         App.interfaceManager.container.$store.commit("setConnected", true);
+        Logger.Log("connected");
     }
 
     private onClose(): void {

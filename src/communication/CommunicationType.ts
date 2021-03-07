@@ -1,4 +1,5 @@
 export enum CommunicationType {
   WebSocket,
-  ExternalFlashInterface
+  ExternalFlashInterface,
+  IFrameExternalFlashInterface
 }

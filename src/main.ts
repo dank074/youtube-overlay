@@ -43,32 +43,75 @@ window.connectWebSocket = function() {
 }
 
 let initExternalFlashInterface = function() {
-  if(window.FlashExternalInterface) {
-    window.FlashExternalInterface.openHabblet = function(arg1: string, arg2: string) {
-      App.communicationManager.onMessage(arg1);
+  if(!window.FlashExternalInterface) {
+    window.FlashExternalInterface = {
+      legacyTrack: (arg1: string, arg2: string, arg3: string) => {},
+      listPlugins: () => { return ''},
+      logEventLog: (arg1: string) => {},
+      track: (arg1: string, arg2: string, arg3: number) => {},
+      logDebug: (arg1: string) => {},
+      logWarn: (arg1: string) => {},
+      logCrash: (arg1: string) => {},
+      logError: (arg1: string) => {},
+      openPage: (arg1: string) => {},
+      openExternalLink: (arg1: string) => {},
+      openHabblet: (arg1: string, arg2: string) => {},
+      openWebPageAndMinimizeClient: (arg1: string) => {},
     };
-  
-    window.FlashExternalInterface.legacyTrack = function(arg1: string, arg2: string, arg3: string) {
-      if (arg1 === "authentication") {
-        if(App.communicationManager.mode === CommunicationType.WebSocket) {
-          App.communicationManager.connectWebSocket();
-        } else {
-          App.communicationManager.onOpen();
-        }
-      }
-    };
-    
-    window.FlashExternalInterface.listPlugins = function() {
-      let txt: string = "";
-      for (var i = 0; i < navigator.plugins.length; i++) {
-        txt += navigator.plugins[i].name + "|";
-      }
-    
-      return txt;
-    };
-  } else {
-    Logger.Log("FlashExternalInterface is undefined. You can use WebSockets for communication but you must initiate the connection manually by calling window.connectWebSocket()")
   }
+
+  window.FlashExternalInterface.openHabblet = function(arg1: string, arg2: string) {
+    App.communicationManager.onMessage(arg1);
+  };
+
+  window.FlashExternalInterface.legacyTrack = function(arg1: string, arg2: string, arg3: string) {
+    if (arg1 === "authentication") {
+      if(App.communicationManager.mode === CommunicationType.WebSocket) {
+        App.communicationManager.connectWebSocket();
+      } else {
+        App.communicationManager.onOpen();
+      }
+    }
+  };
+  
+  window.FlashExternalInterface.listPlugins = function() {
+    let txt: string = "";
+    for (var i = 0; i < navigator.plugins.length; i++) {
+      txt += navigator.plugins[i].name + "|";
+    }
+  
+    return txt;
+  };
 }
 
 initExternalFlashInterface();
+
+let frame : any = document.getElementById('nitro');
+if((window as any).NitroConfig || frame) {
+  App.communicationManager.mode = CommunicationType.IFrameExternalFlashInterface;
+  App.communicationManager.onOpen();//force connection to true for now
+}
+
+if(frame && frame.contentWindow) {
+  window.addEventListener('message', (ev) => {
+    if (!frame || ev.source !== frame.contentWindow) return;
+  
+    const legacyInterface = 'Nitro_LegacyExternalInterface';
+  
+    if (typeof ev.data !== 'string') return;
+  
+    if (ev.data.startsWith(legacyInterface)) {
+      const { method, params } = JSON.parse(
+        ev.data.substr(legacyInterface.length)
+      );
+  
+      if (!('FlashExternalInterface' in window)) return;
+  
+      const fn = (window.FlashExternalInterface as any)[method];
+      if (!fn) return;
+  
+      fn(...params);
+      return;
+    }
+  });
+}
