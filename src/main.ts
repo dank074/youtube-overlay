@@ -87,7 +87,8 @@ let initExternalFlashInterface = function() {
 initExternalFlashInterface();
 
 let frame : any = document.getElementById('nitro');
-if((window as any).NitroConfig || frame) {
+//@ts-ignore
+if(NitroConfig || frame) {
   App.communicationManager.mode = CommunicationType.IFrameExternalFlashInterface;
   App.communicationManager.onOpen();//force connection to true for now
 }
