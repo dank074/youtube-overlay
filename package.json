@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@types/youtube-player": "^5.5.3",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "core-js": "^3.7.0",
     "draggable-vue-directive": "^2.1.0",
     "vue": "^2.6.12",
