@@ -58,7 +58,7 @@ export default class CommunicationManager {
             this._webSocket.send(JSON.stringify(message));
         } else if(this._mode === CommunicationType.IFrameExternalFlashInterface) {
             let frame: any = document.getElementById('nitro');
-            if(frame.contentWindow) frame.contentWindow.openroom(JSON.stringify(message));
+            if(frame != null && frame.contentWindow) frame.contentWindow.openroom(JSON.stringify(message));
             else (window as any).openroom(JSON.stringify(message));
         } else {
             let swfObject: any = document.querySelector('object, embed') as any;
