@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.5.8",
-    "@vue/cli-plugin-typescript": "^4.5.8",
+    "@vue/cli-plugin-typescript": "^5.0.8",
     "@vue/cli-service": "^5.0.8",
     "sass": "^1.29.0",
     "sass-loader": "^8.0.0",
