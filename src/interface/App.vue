@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="youtube-overlay">
     <YoutubeComponent v-if="youtubeplayer.open"/>
     <SlotMachineComponent v-if="slotmachine.open"/>
     <CommandsComponent v-if="commands.open"/>
