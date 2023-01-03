@@ -88,7 +88,7 @@ export default class SlotMachineComponent extends Vue {
   }
 
   spin(): void {
-    if (this.bet == NaN) {
+    if (this.bet == 0) {
       return;
     }
     if (
