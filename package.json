@@ -7,7 +7,7 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "axios": "^0.21.2",
+    "axios": "^0.30.0",
     "core-js": "^3.7.0",
     "draggable-vue-directive": "^2.1.0",
     "vue": "^2.6.12",
